@@ -61,7 +61,16 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+				hologram: {
+					primary: 'hsl(var(--hologram-primary))',
+					secondary: 'hsl(var(--hologram-secondary))',
+					accent: 'hsl(var(--hologram-accent))'
+				},
+				neon: 'hsl(var(--neon-glow))',
+				cyber: 'hsl(var(--cyber-dark))',
+				'slot-border': 'hsl(var(--slot-border))',
+				'live-bidding': 'hsl(var(--live-bidding))'
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -84,11 +93,77 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'hologram-glow': {
+					'0%, 100%': {
+						opacity: '0.8',
+						transform: 'scale(1)',
+						filter: 'hue-rotate(0deg)'
+					},
+					'50%': {
+						opacity: '1',
+						transform: 'scale(1.05)',
+						filter: 'hue-rotate(90deg)'
+					}
+				},
+				'neon-pulse': {
+					'0%, 100%': {
+						opacity: '1',
+						boxShadow: '0 0 20px hsl(var(--neon-glow) / 0.5)'
+					},
+					'50%': {
+						opacity: '0.8',
+						boxShadow: '0 0 40px hsl(var(--neon-glow) / 0.8), 0 0 60px hsl(var(--neon-glow) / 0.3)'
+					}
+				},
+				'slot-fade-in': {
+					'0%': {
+						opacity: '0',
+						transform: 'translateY(20px) scale(0.95)'
+					},
+					'100%': {
+						opacity: '1',
+						transform: 'translateY(0) scale(1)'
+					}
+				},
+				'slot-fade-out': {
+					'0%': {
+						opacity: '1',
+						transform: 'translateY(0) scale(1)'
+					},
+					'100%': {
+						opacity: '0',
+						transform: 'translateY(-20px) scale(0.95)'
+					}
+				},
+				'cyber-scan': {
+					'0%': {
+						transform: 'translateX(-100%)'
+					},
+					'100%': {
+						transform: 'translateX(100%)'
+					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'hologram-glow': 'hologram-glow 3s ease-in-out infinite',
+				'neon-pulse': 'neon-pulse 2s ease-in-out infinite',
+				'slot-fade-in': 'slot-fade-in 0.6s ease-out',
+				'slot-fade-out': 'slot-fade-out 0.6s ease-out',
+				'cyber-scan': 'cyber-scan 2s linear infinite'
+			},
+			backgroundImage: {
+				'gradient-hologram': 'var(--gradient-hologram)',
+				'gradient-cyber': 'var(--gradient-cyber)',
+				'gradient-neon': 'var(--gradient-neon)',
+				'gradient-sponsor-slot': 'var(--gradient-sponsor-slot)'
+			},
+			boxShadow: {
+				'hologram': 'var(--shadow-hologram)',
+				'neon': 'var(--shadow-neon)',
+				'cyber': 'var(--shadow-cyber)'
 			}
 		}
 	},

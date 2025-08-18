@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+/* 5D Sponsorship Wall Design System - All colors, gradients, effects
 All colors MUST be HSL.
 */
 
@@ -37,6 +37,30 @@ All colors MUST be HSL.
     --ring: 222.2 84% 4.9%;
 
     --radius: 0.5rem;
+
+    /* 5D Sponsorship Wall Colors */
+    --hologram-primary: 240 100% 70%;
+    --hologram-secondary: 280 100% 80%;
+    --hologram-accent: 200 100% 60%;
+    --neon-glow: 240 100% 60%;
+    --cyber-dark: 240 20% 10%;
+    --slot-border: 240 40% 30%;
+    --live-bidding: 60 100% 50%;
+    
+    /* Gradients */
+    --gradient-hologram: linear-gradient(135deg, hsl(var(--hologram-primary)), hsl(var(--hologram-secondary)));
+    --gradient-cyber: linear-gradient(180deg, hsl(var(--cyber-dark)), hsl(240 30% 15%));
+    --gradient-neon: linear-gradient(90deg, hsl(var(--neon-glow)), hsl(var(--hologram-accent)));
+    --gradient-sponsor-slot: linear-gradient(145deg, hsl(var(--card)), hsl(var(--muted)));
+    
+    /* Shadows & Effects */
+    --shadow-hologram: 0 0 30px hsl(var(--hologram-primary) / 0.5);
+    --shadow-neon: 0 0 20px hsl(var(--neon-glow) / 0.7);
+    --shadow-cyber: 0 10px 40px hsl(var(--cyber-dark) / 0.8);
+    
+    /* Animations */
+    --transition-hologram: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    --transition-cyber: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 
     --sidebar-background: 0 0% 98%;
 
@@ -91,6 +115,12 @@ All colors MUST be HSL.
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+    
+    /* Dark mode 5D enhancements */
+    --hologram-primary: 240 100% 75%;
+    --hologram-secondary: 280 100% 85%;
+    --cyber-dark: 240 25% 8%;
+    --slot-border: 240 50% 25%;
   }
 }
 
