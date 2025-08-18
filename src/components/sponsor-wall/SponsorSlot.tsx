@@ -2,9 +2,9 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { QrCode, Zap, Crown } from 'lucide-react';
 import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Sponsor } from '@/types/sponsor';
 import { cn } from '@/lib/utils';
+import { WALL_CONFIG } from '@/config/wallConfig';
 
 interface SponsorSlotProps {
   sponsor: Sponsor;
@@ -12,6 +12,7 @@ interface SponsorSlotProps {
   isMainSponsor?: boolean;
   isLiveBidding?: boolean;
   onSlotClick?: (sponsor: Sponsor) => void;
+  liveBiddingOverride?: Sponsor['liveBidding'];
 }
 
 export const SponsorSlot: React.FC<SponsorSlotProps> = ({
@@ -19,7 +20,8 @@ export const SponsorSlot: React.FC<SponsorSlotProps> = ({
   isVisible,
   isMainSponsor = false,
   isLiveBidding = false,
-  onSlotClick
+  onSlotClick,
+  liveBiddingOverride
 }) => {
   const handleClick = () => {
     onSlotClick?.(sponsor);
@@ -28,15 +30,15 @@ export const SponsorSlot: React.FC<SponsorSlotProps> = ({
   const slotVariants = {
     hidden: {
       opacity: 0,
-      scale: 0.8,
-      y: 20
+      scale: 0.95,
+      y: 10
     },
     visible: {
       opacity: 1,
       scale: 1,
       y: 0,
       transition: {
-        duration: 0.6,
+        duration: WALL_CONFIG.FADE_IN_DURATION / 1000, // Convert to seconds
         ease: [0.4, 0, 0.2, 1] as const
       }
     },
@@ -49,6 +51,8 @@ export const SponsorSlot: React.FC<SponsorSlotProps> = ({
       }
     }
   };
+
+  const activeLiveBidding = liveBiddingOverride ?? sponsor.liveBidding;
 
   return (
     <motion.div
@@ -65,11 +69,14 @@ export const SponsorSlot: React.FC<SponsorSlotProps> = ({
       <Card className={cn(
         "relative h-full min-h-[120px] overflow-hidden border-2 transition-all duration-500",
         "bg-gradient-sponsor-slot backdrop-blur-sm",
-        isMainSponsor && "border-hologram-primary shadow-hologram animate-hologram-glow",
-        isLiveBidding && "border-live-bidding shadow-neon animate-neon-pulse",
-        !isMainSponsor && !isLiveBidding && "border-slot-border hover:border-hologram-accent",
-        "hover:scale-105 hover:shadow-lg"
-      )}>
+        isMainSponsor && "border-hologram-primary shadow-hologram",
+        isLiveBidding && "border-live-bidding shadow-neon",
+        !isMainSponsor && !isLiveBidding && "border-slot-border",
+        "hover:scale-[1.02] hover:shadow-lg hover:border-hologram-accent"
+      )}
+      style={{
+        transitionProperty: 'transform, box-shadow, border-color, opacity'
+      }}>
         {/* Holographic overlay for main sponsor */}
         {isMainSponsor && (
           <div className="absolute inset-0 bg-gradient-hologram opacity-20 animate-hologram-glow" />
@@ -101,9 +108,18 @@ export const SponsorSlot: React.FC<SponsorSlotProps> = ({
             )}
           </div>
 
-          {/* Sponsor content */}
+          {/* Layer 2 — Sponsor content (animated) */}
           <div className="flex-1 flex items-center justify-center">
-            {sponsor.logo ? (
+            {sponsor.videoUrl ? (
+              <video
+                src={sponsor.videoUrl}
+                className="max-w-full max-h-20 object-contain rounded"
+                autoPlay
+                loop
+                muted
+                playsInline
+              />
+            ) : sponsor.logo ? (
               <img 
                 src={sponsor.logo} 
                 alt={sponsor.name}
@@ -125,10 +141,10 @@ export const SponsorSlot: React.FC<SponsorSlotProps> = ({
           <div className="space-y-1">
             <div className="flex justify-between text-xs text-muted-foreground">
               <span>Day €{sponsor.dayPrice.toLocaleString()}</span>
-              {isLiveBidding && sponsor.liveBidding && (
-                <Badge variant="secondary" className="bg-live-bidding text-background text-xs">
-                  €{sponsor.liveBidding.currentBid.toLocaleString()}
-                </Badge>
+              {isLiveBidding && activeLiveBidding && (
+                <div className="bg-live-bidding text-background text-xs px-2 py-1 rounded-full">
+                  €{activeLiveBidding.currentBid.toLocaleString()}
+                </div>
               )}
             </div>
             <div className="flex justify-between text-xs text-muted-foreground">
@@ -138,7 +154,7 @@ export const SponsorSlot: React.FC<SponsorSlotProps> = ({
           </div>
 
           {/* Live bidding info */}
-          {isLiveBidding && sponsor.liveBidding && (
+          {isLiveBidding && activeLiveBidding && (
             <motion.div 
               className="mt-2 p-2 bg-live-bidding/10 rounded border border-live-bidding"
               animate={{ opacity: [0.7, 1, 0.7] }}
@@ -148,7 +164,7 @@ export const SponsorSlot: React.FC<SponsorSlotProps> = ({
                 LIVE BIDDING
               </div>
               <div className="text-xs text-muted-foreground">
-                {sponsor.liveBidding.highestBidder} leading
+                {activeLiveBidding.highestBidder} leading
               </div>
             </motion.div>
           )}
@@ -159,6 +175,20 @@ export const SponsorSlot: React.FC<SponsorSlotProps> = ({
           <div className="absolute top-2 right-2">
             <div className="w-2 h-2 bg-hologram-accent rounded-full animate-pulse" />
           </div>
+        )}
+
+        {/* Subtle QR prompt during display time */}
+        {isVisible && sponsor.qrCode && (
+          <motion.div
+            className="absolute bottom-2 right-2 bg-background/80 border border-hologram-accent text-foreground rounded-full px-2 py-1 flex items-center gap-1 shadow-sm"
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 6 }}
+            transition={{ duration: 0.3 }}
+          >
+            <QrCode className="w-3 h-3 text-hologram-accent" />
+            <span className="text-[10px]">Scan</span>
+          </motion.div>
         )}
       </Card>
     </motion.div>

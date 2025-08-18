@@ -2,6 +2,7 @@ export interface Sponsor {
   id: string;
   name: string;
   logo: string;
+  videoUrl?: string;
   slotNumber: number;
   tier: 'main' | 'premium' | 'standard';
   dayPrice: number;
@@ -35,4 +36,12 @@ export interface SponsorRotation {
   rotationSpeed: number;
   totalRotations: number;
   isPlaying: boolean;
+  lastRotationTime: number;
+}
+
+export interface WallStatus {
+  currentDay: number;
+  totalRotationsToday: number;
+  lastRotationTimestamp: number;
+  activeRotation: number;
 }

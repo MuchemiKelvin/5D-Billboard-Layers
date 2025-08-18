@@ -126,10 +126,136 @@ All colors MUST be HSL.
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-[hsl(var(--border))];
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-[hsl(var(--background))] text-[hsl(var(--foreground))];
+  }
+}
+
+@layer utilities {
+  /* 5D Hologram Effects */
+  .bg-gradient-cyber {
+    background: var(--gradient-cyber);
+  }
+  
+  .bg-gradient-hologram {
+    background: var(--gradient-hologram);
+    background-size: 200% 200%;
+  }
+  
+  .bg-gradient-neon {
+    background: var(--gradient-neon);
+  }
+  
+  .bg-gradient-sponsor-slot {
+    background: var(--gradient-sponsor-slot);
+  }
+  
+  .shadow-hologram {
+    box-shadow: var(--shadow-hologram);
+  }
+  
+  .shadow-neon {
+    box-shadow: var(--shadow-neon);
+  }
+  
+  .shadow-cyber {
+    box-shadow: var(--shadow-cyber);
+  }
+  
+  .text-hologram-primary {
+    color: hsl(var(--hologram-primary));
+  }
+  
+  .text-hologram-secondary {
+    color: hsl(var(--hologram-secondary));
+  }
+  
+  .text-hologram-accent {
+    color: hsl(var(--hologram-accent));
+  }
+  
+  .text-live-bidding {
+    color: hsl(var(--live-bidding));
+  }
+  
+  .bg-hologram-primary {
+    background-color: hsl(var(--hologram-primary));
+  }
+  
+  .bg-hologram-secondary {
+    background-color: hsl(var(--hologram-secondary));
+  }
+  
+  .bg-hologram-accent {
+    background-color: hsl(var(--hologram-accent));
+  }
+  
+  .bg-live-bidding {
+    background-color: hsl(var(--live-bidding));
+  }
+  
+  .bg-cyber-dark {
+    background-color: hsl(var(--cyber-dark));
+  }
+  
+  .border-hologram-primary {
+    border-color: hsl(var(--hologram-primary));
+  }
+  
+  .border-hologram-secondary {
+    border-color: hsl(var(--hologram-secondary));
+  }
+  
+  .border-hologram-accent {
+    border-color: hsl(var(--hologram-accent));
+  }
+  
+  .border-live-bidding {
+    border-color: hsl(var(--live-bidding));
+  }
+  
+  .border-slot-border {
+    border-color: hsl(var(--slot-border));
+  }
+  
+  /* Animations */
+  @keyframes hologram-glow {
+    0%, 100% { 
+      background-position: 0% 50%; 
+      box-shadow: 0 0 20px hsl(var(--hologram-primary) / 0.3);
+    }
+    50% { 
+      background-position: 100% 50%; 
+      box-shadow: 0 0 40px hsl(var(--hologram-primary) / 0.6);
+    }
+  }
+  
+  @keyframes neon-pulse {
+    0%, 100% { 
+      box-shadow: 0 0 10px hsl(var(--live-bidding) / 0.5);
+    }
+    50% { 
+      box-shadow: 0 0 30px hsl(var(--live-bidding) / 0.8);
+    }
+  }
+  
+  @keyframes cyber-scan {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(400%); }
+  }
+  
+  .animate-hologram-glow {
+    animation: hologram-glow 3s ease-in-out infinite;
+  }
+  
+  .animate-neon-pulse {
+    animation: neon-pulse 2s ease-in-out infinite;
+  }
+  
+  .animate-cyber-scan {
+    animation: cyber-scan 2s linear infinite;
   }
 }

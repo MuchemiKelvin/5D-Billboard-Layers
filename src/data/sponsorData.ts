@@ -1,15 +1,44 @@
 import { Sponsor, BiddingEvent } from '@/types/sponsor';
+import { WALL_CONFIG } from '@/config/wallConfig';
+
+// Helper function to generate slot pricing
+const generateSlotPricing = (tier: 'main' | 'premium' | 'standard') => {
+  const basePrice = {
+    main: 25000,
+    premium: 15000,
+    standard: 5000
+  }[tier];
+
+  return {
+    dayPrice: basePrice,
+    weekendPrice: basePrice * 2.5,
+    weekPrice: basePrice * 5
+  };
+};
 
 export const sponsorSlots: Sponsor[] = [
+  // Main Sponsor (2x2 slot)
+  {
+    id: 'main',
+    name: 'KARDIVERSE™',
+    logo: '/placeholder.svg',
+    slotNumber: 0,
+    tier: 'main',
+    ...generateSlotPricing('main'),
+    isActive: true,
+    description: '5D • AR • HOLOGRAM',
+    qrCode: 'qr-main',
+    website: 'https://kardiverse.com'
+  },
+
+  // First regular slot
   {
     id: 's01',
     name: 'TechCorp Kenya',
     logo: '/placeholder.svg',
     slotNumber: 1,
-    tier: 'standard',
-    dayPrice: 5000,
-    weekendPrice: 12.5,
-    weekPrice: 25,
+    tier: 'premium',
+    ...generateSlotPricing('premium'),
     isActive: true,
     qrCode: 'qr-001',
     website: 'https://techcorp.ke',
@@ -27,20 +56,6 @@ export const sponsorSlots: Sponsor[] = [
     isActive: true,
     qrCode: 'qr-002',
     website: 'https://safaribank.ke'
-  },
-  // Main Sponsor Slot
-  {
-    id: 'main',
-    name: 'MAIN SPONSOR',
-    logo: '/placeholder.svg',
-    slotNumber: 0,
-    tier: 'main',
-    dayPrice: 0,
-    weekendPrice: 0,
-    weekPrice: 0,
-    isActive: true,
-    description: '5D • AR • HOLOGRAM',
-    qrCode: 'qr-main'
   },
   // Live Bidding Slot
   {
@@ -64,22 +79,23 @@ export const sponsorSlots: Sponsor[] = [
 ];
 
 // Generate remaining slots
-for (let i = 3; i <= 24; i++) {
-  if (i === 8) continue; // Skip live bidding slot
-  
-  sponsorSlots.push({
-    id: `s${i.toString().padStart(2, '0')}`,
-    name: `Sponsor ${i}`,
-    logo: '/placeholder.svg',
-    slotNumber: i,
-    tier: i % 5 === 0 ? 'premium' : 'standard',
-    dayPrice: 5000,
-    weekendPrice: 12.5,
-    weekPrice: 25,
-    isActive: Math.random() > 0.2, // 80% active
-    qrCode: `qr-${i.toString().padStart(3, '0')}`,
-    website: `https://sponsor${i}.ke`
-  });
+{
+  for (let i = 3; i <= 24; i++) {
+    if (i === 8) continue; // Skip live bidding slot (already added)
+    sponsorSlots.push({
+      id: `s${i.toString().padStart(2, '0')}`,
+      name: `Sponsor ${i}`,
+      logo: '/placeholder.svg',
+      slotNumber: i,
+      tier: i % 5 === 0 ? 'premium' : 'standard',
+      dayPrice: 5000,
+      weekendPrice: 12.5,
+      weekPrice: 25,
+      isActive: Math.random() > 0.2, // 80% active
+      qrCode: `qr-${i.toString().padStart(3, '0')}`,
+      website: `https://sponsor${i}.ke`
+    });
+  }
 }
 
 export const recentBids: BiddingEvent[] = [
@@ -133,10 +149,14 @@ export const todaysFeaturedSponsors = [
   sponsorSlots.find(s => s.slotNumber === 12),
   sponsorSlots.find(s => s.slotNumber === 13),
   sponsorSlots.find(s => s.slotNumber === 14),
+  sponsorSlots.find(s => s.slotNumber === 15),
   sponsorSlots.find(s => s.slotNumber === 16),
   sponsorSlots.find(s => s.slotNumber === 17),
+  sponsorSlots.find(s => s.slotNumber === 18),
+  sponsorSlots.find(s => s.slotNumber === 19),
+  sponsorSlots.find(s => s.slotNumber === 20),
+  sponsorSlots.find(s => s.slotNumber === 21),
+  sponsorSlots.find(s => s.slotNumber === 22),
   sponsorSlots.find(s => s.slotNumber === 23),
-  sponsorSlots.find(s => s.slotNumber === 24),
-  sponsorSlots.find(s => s.slotNumber === 25),
-  sponsorSlots.find(s => s.slotNumber === 26)
+  sponsorSlots.find(s => s.slotNumber === 24)
 ].filter(Boolean) as Sponsor[];

@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import animate from "tailwindcss-animate";
 
 export default {
 	darkMode: ["class"],
@@ -9,6 +10,7 @@ export default {
 		"./src/**/*.{ts,tsx}",
 	],
 	prefix: "",
+	plugins: [animate],
 	theme: {
 		container: {
 			center: true,
@@ -166,6 +168,5 @@ export default {
 				'cyber': 'var(--shadow-cyber)'
 			}
 		}
-	},
-	plugins: [require("tailwindcss-animate")],
+	}
 } satisfies Config;
