@@ -10,18 +10,28 @@ interface BaseGridLayerProps {
 // Static base grid layer: frames, labels (S01–S24), subtle QR icon, pricing chips.
 // No animations; always visible behind animated layers.
 export const BaseGridLayer: React.FC<BaseGridLayerProps> = () => {
-	// Build grid the same way as the main wall so positions line up
-	const buildGrid = () => {
-		const grid: Array<any> = Array(24).fill(null);
-		for (let n = 1; n <= 24; n++) {
-			const s = sponsorSlots.find(sp => sp.slotNumber === n && sp.tier !== 'main');
-			if (s) grid[n - 1] = { sponsor: s, isMainSponsor: false, isLiveBidding: Boolean(s.liveBidding?.enabled) };
-		}
-		const live = sponsorSlots.find(s => s.liveBidding?.enabled);
-		if (live) grid[12] = { sponsor: live, isMainSponsor: false, isLiveBidding: true };
+    // Build grid the same way as the main wall so positions line up
+    const buildGrid = () => {
+        const grid: Array<any> = Array(24).fill(null);
+        
+        // Place main sponsor first (takes up 2x2)
+        const mainSponsor = sponsorSlots.find(s => s.tier === 'main');
+        if (mainSponsor) {
+            grid[0] = { sponsor: mainSponsor, isMainSponsor: true, isLiveBidding: false };
+        }
+        
+        // Place other slots
+        for (let n = 1; n <= 24; n++) {
+            const s = sponsorSlots.find(sp => sp.slotNumber === n && sp.tier !== 'main');
+            if (s) grid[n - 1] = { sponsor: s, isMainSponsor: false, isLiveBidding: Boolean(s.liveBidding?.enabled) };
+        }
+        
+        // Place live bidding slot in a prominent position
+        const live = sponsorSlots.find(s => s.liveBidding?.enabled);
+        if (live) grid[12] = { sponsor: live, isMainSponsor: false, isLiveBidding: true };
 
-		return grid;
-	};
+        return grid;
+    };
 
 	const gridLayout = buildGrid();
 

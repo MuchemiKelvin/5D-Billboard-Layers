@@ -6,7 +6,7 @@ export const WALL_CONFIG = {
   ROTATIONS_PER_DAY: 4,
   ROTATION_DURATION: 86400000 / 4, // 24 hours / 4 rotations = 6 hours per rotation
   BRANDING_BREAK_MS: 30000, // Branding loop duration between rotations
-  ENABLE_HOLOGRAM: false, // Toggle three.js hologram effects
+  ENABLE_HOLOGRAM: true, // Toggle three.js hologram effects
   
   // Timing settings
   SLOT_DISPLAY_TIME: 4000, // 4 seconds per slot
@@ -22,7 +22,7 @@ export const WALL_CONFIG = {
   },
   
   // Premium slot settings
-  HOLOGRAM_OPACITY: 0.3,
+  HOLOGRAM_OPACITY: 0.6,
   PREMIUM_SLOTS_PER_VIEW: 3,
   
   // Interaction settings

@@ -1,7 +1,8 @@
 import React, { useRef, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Sphere, useTexture } from '@react-three/drei';
+import { Sphere } from '@react-three/drei';
 import * as THREE from 'three';
+import { WALL_CONFIG } from '@/config/wallConfig';
 
 interface HologramMaterialProps {
   children: React.ReactNode;
@@ -56,9 +57,9 @@ const HologramMaterial: React.FC<HologramMaterialProps> = ({ children }) => {
 
   const uniforms = useMemo(() => ({
     time: { value: 0 },
-    color1: { value: new THREE.Color(0x4f46e5) }, // hologram-primary
-    color2: { value: new THREE.Color(0x7c3aed) }, // hologram-secondary
-    opacity: { value: 0.8 }
+    color1: { value: new THREE.Color(0x4ad3ff) },
+    color2: { value: new THREE.Color(0x0088ff) },
+    opacity: { value: WALL_CONFIG.HOLOGRAM_OPACITY }
   }), []);
 
   useFrame((state) => {
@@ -74,48 +75,32 @@ const HologramMaterial: React.FC<HologramMaterialProps> = ({ children }) => {
       fragmentShader={fragmentShader}
       uniforms={uniforms}
       transparent
-      side={THREE.DoubleSide}
-    />
-  );
-};
-
-const HologramSphere: React.FC = () => {
-  const meshRef = useRef<THREE.Mesh>(null);
-
-  useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.5) * 0.1;
-      meshRef.current.rotation.y += 0.01;
-      meshRef.current.scale.setScalar(1 + Math.sin(state.clock.elapsedTime * 2) * 0.05);
-    }
-  });
-
-  return (
-    <Sphere ref={meshRef} args={[1, 32, 32]} position={[0, 0, 0]}>
-      <HologramMaterial>
-        <meshBasicMaterial />
-      </HologramMaterial>
-    </Sphere>
+      depthWrite={false}
+    >
+      {children}
+    </shaderMaterial>
   );
 };
 
 interface HologramEffectProps {
-  isActive: boolean;
   className?: string;
 }
 
-export const HologramEffect: React.FC<HologramEffectProps> = ({ isActive, className = "" }) => {
-  if (!isActive) return null;
-
+export const HologramEffect: React.FC<HologramEffectProps> = ({ className }) => {
   return (
-    <div className={`absolute inset-0 pointer-events-none ${className}`}>
-      <Canvas
-        camera={{ position: [0, 0, 3], fov: 50 }}
-        style={{ background: 'transparent' }}
-      >
-        <ambientLight intensity={0.2} />
-        <pointLight position={[10, 10, 10]} intensity={0.5} />
-        <HologramSphere />
+    <div className={className} style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+      <Canvas camera={{ position: [0, 0, 5] }}>
+        <ambientLight intensity={0.5} />
+        <pointLight position={[10, 10, 10]} />
+        <Sphere args={[1.2, 64, 64]}>
+          <HologramMaterial>
+            <meshStandardMaterial
+              color={0x4ad3ff}
+              transparent
+              opacity={WALL_CONFIG.HOLOGRAM_OPACITY}
+            />
+          </HologramMaterial>
+        </Sphere>
       </Canvas>
     </div>
   );
