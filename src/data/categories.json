@@ -1,0 +1,289 @@
+{
+  "categories": [
+    {
+      "id": "CAT-001",
+      "name": "Banking & Financial Services",
+      "description": "Financial institutions, banks, insurance, and fintech companies",
+      "subcategories": [
+        {
+          "id": "SUB-001",
+          "name": "Commercial Banks",
+          "description": "Traditional banking institutions",
+          "companies": ["COMP-001", "COMP-003", "COMP-004", "COMP-005"]
+        },
+        {
+          "id": "SUB-002",
+          "name": "Mobile Money & Fintech",
+          "description": "Digital financial services and mobile payments",
+          "companies": ["COMP-002"]
+        },
+        {
+          "id": "SUB-003",
+          "name": "SACCOs & Microfinance",
+          "description": "Savings and credit cooperative organizations",
+          "companies": []
+        },
+        {
+          "id": "SUB-004",
+          "name": "Insurance",
+          "description": "Insurance and risk management services",
+          "companies": []
+        }
+      ],
+      "auctionEligible": true,
+      "reservePriceMultiplier": 1.5,
+      "color": "#1E40AF"
+    },
+    {
+      "id": "CAT-002",
+      "name": "Telecommunications & ICT",
+      "description": "Mobile operators, internet service providers, and technology companies",
+      "subcategories": [
+        {
+          "id": "SUB-005",
+          "name": "Mobile Operators",
+          "description": "Cellular network providers",
+          "companies": ["COMP-002", "COMP-006", "COMP-007"]
+        },
+        {
+          "id": "SUB-006",
+          "name": "ISPs",
+          "description": "Internet service providers",
+          "companies": ["COMP-008"]
+        },
+        {
+          "id": "SUB-007",
+          "name": "Data Centers & Cloud",
+          "description": "Data storage and cloud computing services",
+          "companies": []
+        },
+        {
+          "id": "SUB-008",
+          "name": "Tech Startups",
+          "description": "Innovative technology companies",
+          "companies": []
+        }
+      ],
+      "auctionEligible": true,
+      "reservePriceMultiplier": 2.0,
+      "color": "#059669"
+    },
+    {
+      "id": "CAT-003",
+      "name": "E-commerce & Digital Trade",
+      "description": "Online marketplaces, retail e-commerce, and digital delivery services",
+      "subcategories": [
+        {
+          "id": "SUB-009",
+          "name": "Online Marketplaces",
+          "description": "Digital platforms for buying and selling",
+          "companies": ["COMP-010"]
+        },
+        {
+          "id": "SUB-010",
+          "name": "Retail E-commerce",
+          "description": "Online retail stores",
+          "companies": []
+        },
+        {
+          "id": "SUB-011",
+          "name": "Delivery Apps",
+          "description": "Food and goods delivery services",
+          "companies": ["COMP-023", "COMP-024", "COMP-025"]
+        },
+        {
+          "id": "SUB-012",
+          "name": "B2B Platforms",
+          "description": "Business-to-business digital platforms",
+          "companies": ["COMP-022"]
+        }
+      ],
+      "auctionEligible": true,
+      "reservePriceMultiplier": 1.8,
+      "color": "#DC2626"
+    },
+    {
+      "id": "CAT-004",
+      "name": "Retail & Wholesale Trade",
+      "description": "Supermarket chains, consumer electronics, and wholesale distribution",
+      "subcategories": [
+        {
+          "id": "SUB-013",
+          "name": "Supermarket Chains",
+          "description": "Large retail grocery stores",
+          "companies": ["COMP-009", "COMP-011", "COMP-012"]
+        },
+        {
+          "id": "SUB-014",
+          "name": "Consumer Electronics",
+          "description": "Technology and electronics retail",
+          "companies": []
+        },
+        {
+          "id": "SUB-015",
+          "name": "Fashion & Lifestyle",
+          "description": "Clothing and lifestyle retail",
+          "companies": []
+        },
+        {
+          "id": "SUB-016",
+          "name": "Wholesale Distributors",
+          "description": "Bulk goods distribution",
+          "companies": []
+        }
+      ],
+      "auctionEligible": true,
+      "reservePriceMultiplier": 1.3,
+      "color": "#7C3AED"
+    },
+    {
+      "id": "CAT-005",
+      "name": "Manufacturing & Processing",
+      "description": "Food and beverage production, construction materials, and automotive assembly",
+      "subcategories": [
+        {
+          "id": "SUB-017",
+          "name": "Food & Beverages",
+          "description": "Food processing and beverage production",
+          "companies": ["COMP-013", "COMP-014", "COMP-015", "COMP-016"]
+        },
+        {
+          "id": "SUB-018",
+          "name": "Cement & Construction",
+          "description": "Building materials and construction",
+          "companies": ["COMP-026", "COMP-027"]
+        },
+        {
+          "id": "SUB-019",
+          "name": "Pharmaceuticals",
+          "description": "Medical and pharmaceutical manufacturing",
+          "companies": []
+        },
+        {
+          "id": "SUB-020",
+          "name": "Chemicals & Cleaning",
+          "description": "Chemical and cleaning product manufacturing",
+          "companies": []
+        },
+        {
+          "id": "SUB-021",
+          "name": "Automotive Assembly",
+          "description": "Vehicle assembly and distribution",
+          "companies": ["COMP-028", "COMP-029"]
+        }
+      ],
+      "auctionEligible": true,
+      "reservePriceMultiplier": 1.4,
+      "color": "#EA580C"
+    },
+    {
+      "id": "CAT-006",
+      "name": "Agriculture & Agribusiness",
+      "description": "Tea, coffee, horticulture, dairy, and agricultural exports",
+      "subcategories": [
+        {
+          "id": "SUB-022",
+          "name": "Tea, Coffee & Horticulture",
+          "description": "Tea, coffee, and flower farming",
+          "companies": ["COMP-030", "COMP-031"]
+        },
+        {
+          "id": "SUB-023",
+          "name": "Dairy & Livestock",
+          "description": "Dairy farming and livestock management",
+          "companies": ["COMP-032"]
+        },
+        {
+          "id": "SUB-024",
+          "name": "Food Aggregators",
+          "description": "Agricultural product aggregation",
+          "companies": []
+        },
+        {
+          "id": "SUB-025",
+          "name": "Large Farms & Exports",
+          "description": "Large-scale farming and export operations",
+          "companies": ["COMP-033"]
+        }
+      ],
+      "auctionEligible": true,
+      "reservePriceMultiplier": 1.2,
+      "color": "#16A34A"
+    },
+    {
+      "id": "CAT-007",
+      "name": "Energy & Utilities",
+      "description": "Oil and gas, power generation, renewable energy, and utilities",
+      "subcategories": [
+        {
+          "id": "SUB-026",
+          "name": "Oil & Gas",
+          "description": "Petroleum and natural gas operations",
+          "companies": ["COMP-019", "COMP-020"]
+        },
+        {
+          "id": "SUB-027",
+          "name": "Power Generation",
+          "description": "Electricity generation and distribution",
+          "companies": ["COMP-017", "COMP-018"]
+        },
+        {
+          "id": "SUB-028",
+          "name": "Renewable Energy",
+          "description": "Solar, wind, and sustainable energy",
+          "companies": ["COMP-021"]
+        },
+        {
+          "id": "SUB-029",
+          "name": "LPG & Gas Distribution",
+          "description": "Liquefied petroleum gas distribution",
+          "companies": []
+        }
+      ],
+      "auctionEligible": true,
+      "reservePriceMultiplier": 1.6,
+      "color": "#CA8A04"
+    },
+    {
+      "id": "CAT-008",
+      "name": "Construction & Real Estate",
+      "description": "Real estate development, construction materials, and property services",
+      "subcategories": [
+        {
+          "id": "SUB-030",
+          "name": "Developers",
+          "description": "Real estate development companies",
+          "companies": ["COMP-034", "COMP-035"]
+        },
+        {
+          "id": "SUB-031",
+          "name": "Hardware & Building Materials",
+          "description": "Construction materials and hardware",
+          "companies": []
+        },
+        {
+          "id": "SUB-032",
+          "name": "Real Estate Agencies",
+          "description": "Property sales and management",
+          "companies": []
+        },
+        {
+          "id": "SUB-033",
+          "name": "Roads & Infrastructure",
+          "description": "Infrastructure and road construction",
+          "companies": []
+        }
+      ],
+      "auctionEligible": true,
+      "reservePriceMultiplier": 1.3,
+      "color": "#9333EA"
+    }
+  ],
+  "metadata": {
+    "totalCategories": 8,
+    "totalSubcategories": 33,
+    "auctionEligibleCategories": 8,
+    "lastUpdated": "2024-01-15T10:00:00Z",
+    "version": "1.0.0"
+  }
+} 

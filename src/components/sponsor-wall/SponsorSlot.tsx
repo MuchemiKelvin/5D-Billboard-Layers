@@ -1,196 +1,576 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { QrCode, Zap, Crown } from 'lucide-react';
-import { Card } from '@/components/ui/card';
-import { Sponsor } from '@/types/sponsor';
-import { cn } from '@/lib/utils';
-import { WALL_CONFIG } from '@/config/wallConfig';
+import { HologramEffect } from './HologramEffect';
+import { dataService, type Company } from '../../data/dataService';
 
-interface SponsorSlotProps {
-  sponsor: Sponsor;
-  isVisible: boolean;
-  isMainSponsor?: boolean;
-  isLiveBidding?: boolean;
-  onSlotClick?: (sponsor: Sponsor) => void;
-  liveBiddingOverride?: Sponsor['liveBidding'];
+interface SlotData {
+  currentBid?: number;
+  reservePrice?: number;
 }
 
-export const SponsorSlot: React.FC<SponsorSlotProps> = ({
-  sponsor,
-  isVisible,
-  isMainSponsor = false,
-  isLiveBidding = false,
-  onSlotClick,
-  liveBiddingOverride
+interface SponsorSlotProps {
+  slotNumber: number;
+  slotType: 'standard' | 'main-sponsor' | 'live-bidding';
+  className?: string;
+  isActive?: boolean;
+}
+
+export const SponsorSlot: React.FC<SponsorSlotProps> = ({ 
+  slotNumber, 
+  slotType, 
+  isActive, 
+  className = '' 
 }) => {
-  const handleClick = () => {
-    onSlotClick?.(sponsor);
+  const [company, setCompany] = useState<Company | null>(null);
+  const [slotData, setSlotData] = useState<SlotData | null>(null);
+  const [timeRemaining, setTimeRemaining] = useState(3); // 3 seconds per cycle
+  const [nextCompany, setNextCompany] = useState<Company | null>(null);
+  const [showNextCompanyPreview, setShowNextCompanyPreview] = useState(false);
+  const [liveBidAmount, setLiveBidAmount] = useState(0);
+  const [totalBids, setTotalBids] = useState(0);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [emptySlotGlow, setEmptySlotGlow] = useState<string>('slot-glow-empty');
+
+  // Convert KES to EUR (approximate rate: 1 EUR = 150 KES)
+  const convertToEUR = (kes: number) => (kes / 150).toFixed(0);
+
+  useEffect(() => {
+    // Get slot data from the data service
+    const slot = dataService.getSlotByNumber(slotNumber);
+    if (slot) {
+      setSlotData({
+        currentBid: slot.currentBid,
+        reservePrice: slot.reservePrice
+      });
+    } else {
+      setSlotData(null);
+    }
+
+    // Get company data if slot has a current sponsor
+    if (slot?.currentSponsor) {
+      const companyData = dataService.getCompanyById(slot.currentSponsor);
+      setCompany(companyData || null);
+    } else {
+      setCompany(null);
+    }
+
+    // Simulate next company for preview
+    const nextCompanyId = slot?.currentSponsor === 'COMP-001' ? 'COMP-002' : 'COMP-001';
+    const nextCompanyData = dataService.getCompanyById(nextCompanyId);
+    setNextCompany(nextCompanyData || null);
+
+    // Set random gradient glow for empty slots
+    if (!slot?.currentSponsor) {
+      const glowVariants = [
+        'slot-glow-empty-cyan',
+        'slot-glow-empty-purple', 
+        'slot-glow-empty-pink',
+        'slot-glow-empty-green',
+        'slot-glow-empty-gold'
+      ];
+      const randomGlow = glowVariants[Math.floor(Math.random() * glowVariants.length)];
+      setEmptySlotGlow(randomGlow);
+    }
+  }, [slotNumber]);
+
+  // Countdown timer effect
+  useEffect(() => {
+    if (!isActive) return;
+
+    const timer = setInterval(() => {
+      setTimeRemaining(prev => {
+        if (prev <= 1) {
+          return 3; // Reset to 3 seconds
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [isActive]);
+
+  // Real-time bid updates effect
+  useEffect(() => {
+    if (!isActive || !slotData) return;
+
+    // Simulate live bid updates
+    const bidTimer = setInterval(() => {
+      if (slotType === 'live-bidding') {
+        setLiveBidAmount(prev => prev + Math.floor(Math.random() * 1000));
+        setTotalBids(prev => prev + 1);
+      }
+    }, 3000);
+
+    return () => clearInterval(bidTimer);
+  }, [isActive, slotData, slotType]);
+
+  // Auction countdown effect - REMOVED
+
+  // Determine hologram settings based on slot type and state
+  const hologramSettings = {
+    intensity: slotType === 'main-sponsor' ? 1.5 : 
+               slotType === 'live-bidding' ? 1.2 : 0.4,
+    enableParticles: slotType === 'main-sponsor' || slotType === 'live-bidding',
+    enableLightRays: slotType === 'main-sponsor' || slotType === 'live-bidding',
+    enableDepthField: slotType === 'main-sponsor' || slotType === 'live-bidding',
+    enableScanningLines: slotType === 'main-sponsor',
+    enableCornerAccents: false // Corner accents completely disabled
   };
 
+  // Enhanced animation variants with sophisticated hover effects
   const slotVariants = {
-    hidden: {
-      opacity: 0,
-      scale: 0.95,
-      y: 10
-    },
-    visible: {
-      opacity: 1,
+    initial: { 
+      opacity: 1, 
       scale: 1,
-      y: 0,
-      transition: {
-        duration: WALL_CONFIG.FADE_IN_DURATION / 1000, // Convert to seconds
-        ease: [0.4, 0, 0.2, 1] as const
+      rotateY: 0,
+      rotateX: 0
+    },
+    animate: { 
+      opacity: 1, 
+      scale: 1,
+      rotateY: 0,
+      rotateX: 0,
+      transition: { 
+        duration: 0.3,
+        ease: "easeOut" as const
       }
     },
-    exit: {
-      opacity: 0,
-      scale: 0.9,
-      y: -20,
-      transition: {
-        duration: 0.4
+    hover: { 
+      scale: slotType === 'main-sponsor' ? 1.01 : 1.03,
+      rotateY: slotType === 'main-sponsor' ? 1 : 2,
+      rotateX: slotType === 'main-sponsor' ? 0.5 : 1,
+      y: -2,
+      transition: { 
+        duration: 0.2,
+        ease: "easeOut" as const,
+        type: "spring" as const,
+        stiffness: 300,
+        damping: 20
+      }
+    },
+    tap: {
+      scale: slotType === 'main-sponsor' ? 0.99 : 0.97,
+      transition: { 
+        duration: 0.1,
+        ease: "easeInOut" as const
       }
     }
   };
 
-  const activeLiveBidding = liveBiddingOverride ?? sponsor.liveBidding;
+  // Content animation variants - Simplified
+  const contentVariants = {
+    initial: { opacity: 0, scale: 0.98 },
+    animate: { 
+      opacity: 1, 
+      scale: 1,
+      transition: { duration: 0.3 }
+    },
+    exit: { 
+      opacity: 0, 
+      scale: 0.98,
+      transition: { duration: 0.2 }
+    }
+  };
 
-  return (
-    <motion.div
-      variants={slotVariants}
-      initial="hidden"
-      animate={isVisible ? "visible" : "hidden"}
-      exit="exit"
-      className={cn(
-        "relative group cursor-pointer",
-        isMainSponsor && "col-span-2 row-span-2"
-      )}
-      onClick={handleClick}
-    >
-      <Card className={cn(
-        "relative h-full min-h-[120px] overflow-hidden border-2 transition-all duration-500",
-        "bg-gradient-sponsor-slot backdrop-blur-sm",
-        isMainSponsor && "border-hologram-primary shadow-hologram",
-        isLiveBidding && "border-live-bidding shadow-neon",
-        !isMainSponsor && !isLiveBidding && "border-slot-border",
-        "hover:scale-[1.02] hover:shadow-lg hover:border-hologram-accent"
-      )}
-      style={{
-        transitionProperty: 'transform, box-shadow, border-color, opacity'
-      }}>
-        {/* Holographic overlay for main sponsor */}
-        {isMainSponsor && (
-          <div className="absolute inset-0 bg-gradient-hologram opacity-20 animate-hologram-glow" />
-        )}
-        
-        {/* Cyber scan effect for live bidding */}
-        {isLiveBidding && (
-          <div className="absolute inset-0 overflow-hidden">
-            <div className="absolute w-full h-1 bg-gradient-neon opacity-60 animate-cyber-scan" />
-          </div>
-        )}
-
-        <div className="relative z-10 p-4 h-full flex flex-col justify-between">
-          {/* Slot header */}
-          <div className="flex items-start justify-between">
-            <div className="flex items-center gap-2">
-              <span className={cn(
-                "text-xs font-mono font-bold px-2 py-1 rounded",
-                isMainSponsor ? "bg-hologram-primary text-background" : "bg-muted text-muted-foreground"
-              )}>
-                S{sponsor.slotNumber.toString().padStart(2, '0')}
-              </span>
-              {isMainSponsor && <Crown className="w-4 h-4 text-hologram-primary" />}
-              {isLiveBidding && <Zap className="w-4 h-4 text-live-bidding animate-pulse" />}
-            </div>
-            
-            {sponsor.qrCode && (
-              <QrCode className="w-4 h-4 text-muted-foreground hover:text-hologram-accent transition-colors" />
-            )}
+  // Get slot content based on type and company data - Updated to match mockup
+  const getSlotContent = () => {
+    if (slotType === 'main-sponsor') {
+      return (
+        <div className="text-center h-full flex flex-col justify-center">
+          {/* Main Sponsor Tag */}
+          <div className="absolute top-3 left-3">
+            <span className="text-sm font-bold text-blue-400 bg-blue-900/50 px-3 py-2 rounded-lg">
+              MAIN SPONSOR
+            </span>
           </div>
 
-          {/* Layer 2 — Sponsor content (animated) */}
-          <div className="flex-1 flex items-center justify-center">
-            {sponsor.videoUrl ? (
-              <video
-                src={sponsor.videoUrl}
-                className="max-w-full max-h-20 object-contain rounded"
-                autoPlay
-                loop
-                muted
-                playsInline
-              />
-            ) : sponsor.logo ? (
-              <img 
-                src={sponsor.logo} 
-                alt={sponsor.name}
-                className="max-w-full max-h-16 object-contain filter group-hover:brightness-110 transition-all"
-              />
-            ) : (
-              <div className="text-center">
-                <h3 className={cn(
-                  "font-bold text-sm",
-                  isMainSponsor ? "text-hologram-primary text-lg" : "text-foreground"
-                )}>
-                  {sponsor.name}
-                </h3>
+                     {/* Countdown Timer - REMOVED */}
+
+          {/* Removed Cycle Indicator */}
+          
+          {company && isActive ? (
+            <motion.div
+              key={`${company.id}-${Date.now()}`}
+              variants={contentVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              className="flex flex-col items-center justify-center h-full"
+            >
+              <div className="mb-4">
+                <img 
+                  src={company.logo} 
+                  alt={`${company.name} logo`}
+                  className="w-24 h-24 mx-auto object-contain"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = 'none';
+                    target.nextElementSibling?.classList.remove('hidden');
+                  }}
+                />
+                <div className="hidden w-24 h-24 mx-auto bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold text-lg">
+                  {company.name.substring(0, 2).toUpperCase()}
+                </div>
               </div>
-            )}
-          </div>
-
-          {/* Pricing info */}
-          <div className="space-y-1">
-            <div className="flex justify-between text-xs text-muted-foreground">
-              <span>Day €{sponsor.dayPrice.toLocaleString()}</span>
-              {isLiveBidding && activeLiveBidding && (
-                <div className="bg-live-bidding text-background text-xs px-2 py-1 rounded-full">
-                  €{activeLiveBidding.currentBid.toLocaleString()}
+              <div className="text-xl font-bold text-white mb-3">
+                {company.name}
+              </div>
+              <div className="text-lg text-blue-300 mb-3 font-semibold">
+                5D • AR • HOLOGRAM
+              </div>
+            </motion.div>
+          ) : (
+            <div className="text-center flex flex-col items-center justify-center h-full">
+              <div className="text-2xl font-bold text-white mb-3">
+                MAIN SPONSOR
+              </div>
+              <div className="text-lg text-blue-300 mb-3 font-semibold">
+                5D • AR • HOLOGRAM
+              </div>
+              {slotData && (
+                <div className="text-lg text-gray-400 font-mono">
+                  Reserve: EUR {convertToEUR(slotData.reservePrice || 0)}
                 </div>
               )}
             </div>
-            <div className="flex justify-between text-xs text-muted-foreground">
-              <span>Weekend €{sponsor.weekendPrice.toFixed(1)}k</span>
-              <span>Week €{sponsor.weekPrice}k</span>
-            </div>
-          </div>
-
-          {/* Live bidding info */}
-          {isLiveBidding && activeLiveBidding && (
-            <motion.div 
-              className="mt-2 p-2 bg-live-bidding/10 rounded border border-live-bidding"
-              animate={{ opacity: [0.7, 1, 0.7] }}
-              transition={{ duration: 2, repeat: Infinity }}
-            >
-              <div className="text-xs text-live-bidding font-medium">
-                LIVE BIDDING
-              </div>
-              <div className="text-xs text-muted-foreground">
-                {activeLiveBidding.highestBidder} leading
-              </div>
-            </motion.div>
           )}
         </div>
+      );
+    }
 
-        {/* Premium tier indicator */}
-        {sponsor.tier === 'premium' && !isMainSponsor && (
-          <div className="absolute top-2 right-2">
-            <div className="w-2 h-2 bg-hologram-accent rounded-full animate-pulse" />
+    if (slotType === 'live-bidding') {
+      return (
+        <div className="text-center h-full flex flex-col justify-center">
+                     {/* Countdown Timer - REMOVED */}
+
+          {/* Removed Cycle Indicator */}
+
+          {company && isActive ? (
+            <motion.div
+              key={`${company.id}-${Date.now()}`}
+              variants={contentVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+            >
+              <div className="mb-2">
+                <img 
+                  src={company.logo} 
+                  alt={`${company.name} logo`}
+                  className="w-12 h-12 mx-auto object-contain"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = 'none';
+                    target.nextElementSibling?.classList.remove('hidden');
+                  }}
+                />
+                <div className="hidden w-12 h-12 mx-auto bg-gradient-to-br from-green-500 to-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-xs">
+                  {company.name.substring(0, 2).toUpperCase()}
+                </div>
+              </div>
+              <div className="text-xs font-medium text-gray-300 mb-1">
+                {company.name}
+              </div>
+              <div className="text-xs text-green-400 font-bold mb-2">
+                LIVE BIDDING
+              </div>
+              {liveBidAmount > 0 && (
+                <div className="text-lg font-bold text-green-400 mb-1">
+                  €{liveBidAmount.toLocaleString()}
+                </div>
+              )}
+              {totalBids > 0 && (
+                <div className="text-xs text-orange-400 mt-1">
+                  {totalBids} bids
+                </div>
+              )}
+            </motion.div>
+          ) : (
+            <div className="text-center">
+              <div className="text-sm font-bold text-green-400 mb-2">
+                LIVE BIDDING
+              </div>
+              <div className="text-sm font-bold text-white mb-1">
+                €5,000/day
+              </div>
+              <div className="text-xs text-gray-400">
+                Weekend €12.5k
+              </div>
+              <div className="text-xs text-gray-400">
+                Week €25k
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // Standard slot content - Updated to match mockup exactly
+    return (
+      <div className="text-center h-full flex flex-col justify-center">
+                 {/* Countdown Timer - REMOVED */}
+
+        {/* Removed Cycle Indicator */}
+
+        {company && isActive ? (
+          <motion.div
+            key={`${company.id}-${Date.now()}`}
+            variants={contentVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+          >
+            <div className="mb-2">
+              <img 
+                src={company.logo} 
+                alt={`${company.name} logo`}
+                className="w-10 h-10 mx-auto object-contain"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.style.display = 'none';
+                  target.nextElementSibling?.classList.remove('hidden');
+                }}
+              />
+              <div className="hidden w-10 h-10 mx-auto bg-gradient-to-br from-gray-500 to-gray-700 rounded-lg flex items-center justify-center text-white font-bold text-xs">
+                {company.name.substring(0, 2).toUpperCase()}
+              </div>
+            </div>
+            <div className="text-xs font-medium text-gray-300 mb-1 truncate">
+              {company.name}
+            </div>
+          </motion.div>
+        ) : (
+          <div className="text-center">
+            <div className="text-sm font-medium text-gray-400 mb-2">
+              SLOT {slotNumber}
+            </div>
+            <div className="text-sm font-bold text-white mb-1">
+              €5,000/day
+            </div>
+            <div className="text-xs text-gray-400">
+              Weekend €12.5k
+            </div>
+            <div className="text-xs text-gray-400">
+              Week €25k
+            </div>
           </div>
         )}
+      </div>
+    );
+  };
 
-        {/* Subtle QR prompt during display time */}
-        {isVisible && sponsor.qrCode && (
+  // Next Company Preview Component
+  const NextCompanyPreview = () => {
+    if (!nextCompany || !isActive || !showNextCompanyPreview) return null;
+    
+    return (
+      <motion.div
+        className="absolute inset-0 bg-black/80 rounded-xl flex flex-col items-center justify-center z-30"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.2 }}
+      >
+        <div className="text-center">
+          <div className="text-xs text-blue-400 mb-2">Next Company</div>
+          <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold text-xs mx-auto mb-2">
+            {nextCompany.name.substring(0, 2).toUpperCase()}
+          </div>
+          <div className="text-xs text-white font-medium">{nextCompany.name}</div>
+          <div className="text-xs text-gray-400 mt-1">Starting in {timeRemaining}s</div>
+        </div>
+      </motion.div>
+    );
+  };
+
+  // Company Change Notification Component - REMOVED
+
+  // Company Details Overlay Component
+  const CompanyDetailsOverlay = () => {
+    if (!company || !isActive || !showNextCompanyPreview) return null;
+    
+    return (
+      <motion.div
+        className="absolute inset-0 bg-black/90 rounded-xl flex flex-col items-center justify-center z-30 p-4"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.2 }}
+      >
+        <div className="text-center space-y-3">
+          <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold text-lg">
+            {company.name.substring(0, 2).toUpperCase()}
+          </div>
+          <div className="text-lg font-bold text-white">{company.name}</div>
+          <div className="text-sm text-blue-300">{company.category}</div>
+          
+          {slotData && (
+            <div className="space-y-2 text-sm">
+              <div className="flex justify-between">
+                <span className="text-gray-400">Current Bid:</span>
+                <span className="text-green-400 font-semibold">
+                  EUR {convertToEUR(slotData.currentBid || 0)}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-400">Reserve:</span>
+                <span className="text-gray-300">
+                  EUR {convertToEUR(slotData.reservePrice || 0)}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-400">Time Left:</span>
+                <span className="text-yellow-400 font-semibold">
+                  {timeRemaining}s
+                </span>
+              </div>
+            </div>
+          )}
+          
+          <div className="text-xs text-gray-400 mt-4">
+            Click for more details
+          </div>
+        </div>
+      </motion.div>
+    );
+  };
+
+  // Performance Metrics Component
+  const PerformanceMetrics = () => {
+    if (!isActive || !isExpanded) return null;
+    
+    const utilization = ((timeRemaining / 3) * 100).toFixed(1); // Changed from 45 to 3 seconds
+    const revenue = slotData ? convertToEUR(slotData.currentBid || 0) : '0';
+    
+    return (
+      <motion.div
+        className="absolute -bottom-20 left-0 right-0 bg-gray-800/95 rounded-lg p-3 z-50 border border-gray-600"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: 10 }}
+        transition={{ duration: 0.3 }}
+      >
+        <div className="grid grid-cols-3 gap-2 text-xs">
+          <div className="text-center">
+            <div className="text-green-400 font-bold">{utilization}%</div>
+            <div className="text-gray-400">Utilization</div>
+          </div>
+          <div className="text-center">
+            <div className="text-blue-400 font-bold">€{revenue}</div>
+            <div className="text-gray-400">Revenue</div>
+          </div>
+          <div className="text-center">
+            <div className="text-purple-400 font-bold">{totalBids}</div>
+            <div className="text-gray-400">Bids</div>
+          </div>
+        </div>
+      </motion.div>
+    );
+  };
+
+  // Get slot styling based on type and state - Cards always visible
+  const getSlotStyling = () => {
+    let baseClasses = "relative overflow-hidden rounded-xl border transition-all duration-300";
+    
+    if (slotType === 'main-sponsor') {
+      baseClasses += " bg-gradient-to-br from-blue-900/70 to-purple-900/70 border-blue-400/50";
+    } else if (slotType === 'live-bidding') {
+      baseClasses += " bg-gradient-to-br from-green-900/50 to-blue-900/50 border-green-500/30 border-orange-400/50";
+    } else {
+      baseClasses += " bg-gradient-to-br from-gray-800/50 to-gray-900/50 border-gray-600/30";
+    }
+
+    // Enhanced full-slot glow effects for occupied slots
+    if (isActive && company) {
+      if (slotType === 'main-sponsor') {
+        baseClasses += " border-blue-300/80 ring-2 ring-blue-400/30 slot-glow-main";
+      } else if (slotType === 'live-bidding') {
+        baseClasses += " border-green-300/70 ring-2 ring-green-400/30 slot-glow-live";
+      } else {
+        baseClasses += " border-gray-400/60 ring-2 ring-gray-400/20 slot-glow-standard";
+      }
+         } else if (!company) {
+       // Enhanced gradient glow for empty slots with dynamic colors
+       baseClasses += " opacity-70 border-gray-500/30 " + emptySlotGlow;
+     }
+
+    return baseClasses;
+  };
+
+  return (
+    <motion.div
+      className={`${getSlotStyling()} ${className}`}
+      variants={slotVariants}
+      initial="initial"
+      animate="animate"
+      whileHover="hover"
+      whileTap="tap"
+      style={{ 
+        willChange: 'transform',
+        transformStyle: 'preserve-3d',
+        perspective: '1000px'
+      }}
+      layout
+      onHoverStart={() => setShowNextCompanyPreview(true)}
+      onHoverEnd={() => setShowNextCompanyPreview(false)}
+      onClick={() => setIsExpanded(!isExpanded)}
+    >
+      {/* Holographic Effects Layer */}
+      <HologramEffect {...hologramSettings} />
+
+      {/* Slot Number - Top Left with Rotation Indicator */}
+      <div className="absolute top-2 left-2 flex items-center gap-2">
+        <span className="text-xs font-bold text-gray-300">
+          S{slotNumber.toString().padStart(2, '0')}
+        </span>
+        {slotType !== 'main-sponsor' && company && (
           <motion.div
-            className="absolute bottom-2 right-2 bg-background/80 border border-hologram-accent text-foreground rounded-full px-2 py-1 flex items-center gap-1 shadow-sm"
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 6 }}
-            transition={{ duration: 0.3 }}
-          >
-            <QrCode className="w-3 h-3 text-hologram-accent" />
-            <span className="text-[10px]">Scan</span>
-          </motion.div>
+            className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-cyan-400 to-purple-400"
+            animate={{
+              scale: [1, 1.2, 1],
+              opacity: [0.6, 1, 0.6]
+            }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              ease: "easeInOut"
+            }}
+          />
         )}
-      </Card>
+      </div>
+
+      {/* QR Code - Top Right */}
+      <div className="absolute top-2 right-2">
+        <svg 
+          className="w-8 h-8 text-white drop-shadow-lg" 
+          fill="currentColor" 
+          viewBox="0 0 24 24"
+        >
+          <path d="M3 3h6v6H3V3zm2 2v2h2V5H5zm8-2h6v6h-6V3zm2 2v2h2V5h-2zM3 11h6v6H3v-6zm2 2v2h2v-2H5zm8 2h6v6h-6v-6zm2 2v2h2v-2h-2z"/>
+          <path d="M7 7h2v2H7V7zm8 0h2v2h-2V7z"/>
+        </svg>
+      </div>
+
+      {/* Content Layer */}
+      <div className="relative z-10 p-3 h-full flex items-center justify-center">
+        {getSlotContent()}
+      </div>
+
+
+
+      {/* Status Indicators - Only show when company is active */}
+      {isActive && company && (
+        <div className="absolute top-2 left-8 w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+      )}
+
+             {/* Next Company Preview */}
+       <NextCompanyPreview />
+
+       {/* Company Details Overlay */}
+       <CompanyDetailsOverlay />
+
+      {/* Performance Metrics */}
+      <PerformanceMetrics />
     </motion.div>
   );
 };
