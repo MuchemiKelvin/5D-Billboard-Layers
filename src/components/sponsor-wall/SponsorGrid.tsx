@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { SponsorSlot } from './SponsorSlot';
 
 
@@ -16,6 +17,7 @@ export const SponsorGrid: React.FC = () => {
   const [currentCycle, setCurrentCycle] = useState(1);
   const [timeUntilNextCycle, setTimeUntilNextCycle] = useState(45);
   const [activeSlots, setActiveSlots] = useState<number[]>([]);
+  const [hasAnimated, setHasAnimated] = useState(false);
 
 
 
@@ -70,7 +72,44 @@ export const SponsorGrid: React.FC = () => {
     return () => clearInterval(interval);
   }, [isAutoRotating]);
 
+  // Cinematic entrance animation - trigger on component mount
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setHasAnimated(true);
+    }, 100);
+    return () => clearTimeout(timer);
+  }, []);
 
+  // Simple entrance animation like Live Auction Feed
+  const getEntranceAnimation = (slot: GridSlot, index: number) => {
+    const { type } = slot;
+    
+    // Main sponsor - appears first with gentle scale
+    if (type === 'main-sponsor') {
+      return {
+        initial: { opacity: 0, scale: 0.9, y: 20 },
+        animate: { opacity: 1, scale: 1, y: 0 },
+        transition: { duration: 0.6, delay: 0.2 }
+      };
+    }
+
+    // Regular slots - staggered entrance with simple motion
+    return {
+      initial: { opacity: 0, scale: 0.9, y: 20 },
+      animate: { opacity: 1, scale: 1, y: 0 },
+      transition: { duration: 0.5, delay: 0.4 + (index * 0.05) }
+    };
+  };
+
+  // Simple container animation
+  const containerVariants = {
+    initial: { opacity: 0, y: 20 },
+    animate: { 
+      opacity: 1, 
+      y: 0,
+      transition: { duration: 0.6 }
+    }
+  };
 
   // Update active slots based on current cycle
   useEffect(() => {
@@ -121,119 +160,55 @@ export const SponsorGrid: React.FC = () => {
 
 
   return (
-    <div className="w-full max-w-7xl mx-auto p-4">
-      {/* Header - Updated to match mockup */}
-      <div className="text-center mb-8">
-        <h1 className="text-4xl md:text-6xl font-bold text-white mb-2">
-           5D SPONSOR WALL — 24 SLOTS
-         </h1>
-         <p className="text-lg text-gray-300 max-w-3xl mx-auto">
-           Single Wall • 24 Slots + Main Sponsor • 4K Beamer Ready
-         </p>
-      </div>
-
-      {/* Status Bar */}
-      <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-4 mb-6">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
-              <span className="text-green-400">Layer 1: Base Grid</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 bg-blue-400 rounded-full animate-pulse"></div>
-              <span className="text-blue-400">Layer 2: Animation</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 bg-purple-400 rounded-full animate-pulse"></div>
-              <span className="text-purple-400">Layer 3: Hologram FX</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 bg-orange-400 rounded-full animate-pulse"></div>
-              <span className="text-orange-400">Layer 4: Interactive</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 bg-red-400 rounded-full animate-pulse"></div>
-              <span className="text-red-400">Layer 5: Live Auction</span>
-            </div>
-          </div>
+    <motion.div 
+      className="w-full max-w-7xl mx-auto p-4"
+      variants={containerVariants}
+      initial="initial"
+      animate="animate"
+    >
+             {/* Sponsor Grid */}
+       <motion.div 
+         className="grid grid-cols-6 gap-4 auto-rows-[140px] grid-flow-row"
+         initial={{ opacity: 0, y: 30 }}
+         animate={{ opacity: 1, y: 0 }}
+         transition={{ duration: 0.8, delay: 0.3 }}
+       >
+        {gridLayout.map((slot, index) => {
+          const animationProps = getEntranceAnimation(slot, index);
           
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 bg-cyan-400 rounded-full"></div>
-              <span className="text-cyan-400">Auto-Rotation: {isAutoRotating ? 'ON' : 'OFF'}</span>
-            </div>
-            <button
-              onClick={toggleAutoRotation}
-              className={`px-4 py-2 rounded-lg font-medium transition-all ${
-                isAutoRotating
-                  ? 'bg-green-600 hover:bg-green-500 text-white'
-                  : 'bg-gray-600 hover:bg-gray-500 text-white'
-              }`}
+          return (
+            <motion.div 
+              key={slot.slotNumber} 
+              className={getSlotPosition(slot)}
+              initial={animationProps.initial}
+              animate={hasAnimated ? animationProps.animate : animationProps.initial}
+              transition={animationProps.transition}
+              style={{ willChange: 'transform, opacity' }}
             >
-              {isAutoRotating ? 'Pause' : 'Resume'}
-            </button>
-          </div>
-        </div>
-
-        {/* Cycle Information */}
-        <div className="mt-4 pt-4 border-t border-gray-700">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <span className="text-gray-400">Cycle:</span>
-              <span className="text-white font-mono text-lg">{currentCycle}/4</span>
-              <span className="text-gray-400">Time:</span>
-              <span className="text-white font-mono text-lg">{timeUntilNextCycle}s</span>
-            </div>
-            <div className="text-right">
-              <span className="text-gray-400">Active Slots:</span>
-              <span className="text-white font-mono ml-2">{activeSlots.length}/24</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Layer Status Description */}
-        <div className="mt-3 pt-3 border-t border-gray-600/30">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 text-xs text-gray-400">
-            <div>
-              <strong className="text-green-400">Layer 1:</strong> 24-slot grid layout with responsive design
-            </div>
-            <div>
-              <strong className="text-blue-400">Layer 2:</strong> Auto-rotation with 4 cycles and smooth animations
-            </div>
-            <div>
-              <strong className="text-purple-400">Layer 3:</strong> Holographic effects with particles, light rays, and depth
-            </div>
-            <div>
-              <strong className="text-orange-400">Layer 4:</strong> Interactive QR/NFC for hidden content, offers, and bids
-            </div>
-            <div>
-              <strong className="text-red-400">Layer 5:</strong> Live auction feed with real-time bidding updates
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Sponsor Grid */}
-      <div className="grid grid-cols-6 gap-4 auto-rows-[140px] grid-flow-row">
-        {gridLayout.map((slot) => (
-          <div key={slot.slotNumber} className={getSlotPosition(slot)}>
-            <SponsorSlot
-              slotNumber={slot.slotNumber}
-              slotType={slot.type}
-              isActive={activeSlots.includes(slot.slotNumber)}
-              className="h-full"
-            />
-          </div>
-        ))}
-      </div>
+              <SponsorSlot
+                slotNumber={slot.slotNumber}
+                slotType={slot.type}
+                isActive={activeSlots.includes(slot.slotNumber)}
+                className="h-full"
+              />
+              
+              
+            </motion.div>
+          );
+        })}
+      </motion.div>
 
       {/* Footer Stats */}
-      <div className="mt-8 text-center text-gray-400">
+      <motion.div 
+        className="mt-8 text-center text-gray-400"
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 1.5 }} // After all slots have appeared
+      >
         <p className="text-sm">
           Kardiverse™ 5D/24D • Add-on: Hologram +€10K • Live Bidding +€15k • NFC/QR enabled
         </p>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 }; 

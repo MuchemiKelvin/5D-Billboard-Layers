@@ -117,7 +117,7 @@ export const SponsorSlot: React.FC<SponsorSlotProps> = ({
     enableCornerAccents: false // Corner accents completely disabled
   };
 
-  // Enhanced animation variants with sophisticated hover effects
+  // Enhanced animation variants with sophisticated hover effects and heartbeat
   const slotVariants = {
     initial: { 
       opacity: 1, 
@@ -153,6 +153,51 @@ export const SponsorSlot: React.FC<SponsorSlotProps> = ({
       transition: { 
         duration: 0.1,
         ease: "easeInOut" as const
+      }
+    }
+  };
+
+  // Heartbeat animation variants for living sponsor effect
+  const heartbeatVariants = {
+    initial: { 
+      scale: 1,
+      opacity: 1,
+      filter: "brightness(1)"
+    },
+    heartbeat: {
+      scale: [1, 1.02, 1, 1.01, 1],
+      opacity: [1, 0.95, 1, 0.98, 1],
+      filter: ["brightness(1)", "brightness(1.1)", "brightness(1)", "brightness(1.05)", "brightness(1)"],
+      transition: {
+        duration: 2,
+        repeat: Infinity,
+        ease: "easeInOut" as const,
+        times: [0, 0.2, 0.4, 0.6, 1]
+      }
+    },
+    pulse: {
+      scale: [1, 1.01, 1],
+      opacity: [1, 0.9, 1],
+      filter: ["brightness(1)", "brightness(1.2)", "brightness(1)"],
+      transition: {
+        duration: 1.5,
+        repeat: Infinity,
+        ease: "easeInOut" as const,
+        times: [0, 0.5, 1]
+      }
+    }
+  };
+
+  // Blinking effect for active slots
+  const blinkVariants = {
+    initial: { opacity: 1 },
+    blink: {
+      opacity: [1, 0.3, 1, 0.7, 1],
+      transition: {
+        duration: 3,
+        repeat: Infinity,
+        ease: "easeInOut" as const,
+        times: [0, 0.1, 0.2, 0.3, 1]
       }
     }
   };
@@ -321,19 +366,53 @@ export const SponsorSlot: React.FC<SponsorSlotProps> = ({
             exit="exit"
           >
             <div className="mb-2">
-              <img 
+              <motion.img 
                 src={company.logo} 
                 alt={`${company.name} logo`}
                 className="w-10 h-10 mx-auto object-contain"
+                animate={isActive ? {
+                  scale: [1, 1.03, 1, 1.02, 1],
+                  filter: [
+                    "brightness(1)",
+                    "brightness(1.08)",
+                    "brightness(1)",
+                    "brightness(1.04)",
+                    "brightness(1)"
+                  ]
+                } : {}}
+                transition={{
+                  duration: 2.5,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  times: [0, 0.2, 0.4, 0.6, 1]
+                }}
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
                   target.style.display = 'none';
                   target.nextElementSibling?.classList.remove('hidden');
                 }}
               />
-              <div className="hidden w-10 h-10 mx-auto bg-gradient-to-br from-gray-500 to-gray-700 rounded-lg flex items-center justify-center text-white font-bold text-xs">
+              <motion.div 
+                className="hidden w-10 h-10 mx-auto bg-gradient-to-br from-gray-500 to-gray-700 rounded-lg flex items-center justify-center text-white font-bold text-xs"
+                animate={isActive ? {
+                  scale: [1, 1.03, 1, 1.02, 1],
+                  filter: [
+                    "brightness(1)",
+                    "brightness(1.08)",
+                    "brightness(1)",
+                    "brightness(1.04)",
+                    "brightness(1)"
+                  ]
+                } : {}}
+                transition={{
+                  duration: 2.5,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  times: [0, 0.2, 0.4, 0.6, 1]
+                }}
+              >
                 {company.name.substring(0, 2).toUpperCase()}
-              </div>
+              </motion.div>
             </div>
             <div className="text-xs font-medium text-gray-300 mb-1 truncate">
               {company.name}
@@ -502,7 +581,7 @@ export const SponsorSlot: React.FC<SponsorSlotProps> = ({
       className={`${getSlotStyling()} ${className}`}
       variants={slotVariants}
       initial="initial"
-      animate="animate"
+      animate={isActive && company ? "heartbeat" : "initial"}
       whileHover="hover"
       whileTap="tap"
       style={{ 
@@ -515,6 +594,40 @@ export const SponsorSlot: React.FC<SponsorSlotProps> = ({
       onHoverEnd={() => setShowNextCompanyPreview(false)}
       onClick={() => setIsExpanded(!isExpanded)}
     >
+      {/* Heartbeat Animation Overlay */}
+      {isActive && company && (
+        <motion.div
+          className="absolute inset-0 rounded-xl pointer-events-none"
+          variants={heartbeatVariants}
+          initial="initial"
+          animate="heartbeat"
+          style={{
+            background: slotType === 'main-sponsor' 
+              ? 'radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%)'
+              : slotType === 'live-bidding'
+              ? 'radial-gradient(circle, rgba(34, 197, 94, 0.1) 0%, transparent 70%)'
+              : 'radial-gradient(circle, rgba(156, 163, 175, 0.1) 0%, transparent 70%)'
+          }}
+        />
+      )}
+
+      {/* Blinking Effect for Active Slots */}
+      {isActive && company && (
+        <motion.div
+          className="absolute inset-0 rounded-xl pointer-events-none"
+          variants={blinkVariants}
+          initial="initial"
+          animate="blink"
+          style={{
+            background: slotType === 'main-sponsor' 
+              ? 'radial-gradient(circle, rgba(59, 130, 246, 0.05) 0%, transparent 60%)'
+              : slotType === 'live-bidding'
+              ? 'radial-gradient(circle, rgba(34, 197, 94, 0.05) 0%, transparent 60%)'
+              : 'radial-gradient(circle, rgba(156, 163, 175, 0.05) 0%, transparent 60%)'
+          }}
+        />
+      )}
+
       {/* Holographic Effects Layer */}
       <HologramEffect {...hologramSettings} />
 
@@ -527,13 +640,21 @@ export const SponsorSlot: React.FC<SponsorSlotProps> = ({
           <motion.div
             className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-cyan-400 to-purple-400"
             animate={{
-              scale: [1, 1.2, 1],
-              opacity: [0.6, 1, 0.6]
+              scale: [1, 1.5, 1, 1.3, 1],
+              opacity: [0.6, 1, 0.6, 0.9, 0.6],
+              boxShadow: [
+                "0 0 0 0 rgba(34, 211, 238, 0)",
+                "0 0 0 4px rgba(34, 211, 238, 0.3)",
+                "0 0 0 0 rgba(34, 211, 238, 0)",
+                "0 0 0 2px rgba(34, 211, 238, 0.2)",
+                "0 0 0 0 rgba(34, 211, 238, 0)"
+              ]
             }}
             transition={{
-              duration: 2,
+              duration: 2.5,
               repeat: Infinity,
-              ease: "easeInOut"
+              ease: "easeInOut",
+              times: [0, 0.2, 0.4, 0.6, 1]
             }}
           />
         )}

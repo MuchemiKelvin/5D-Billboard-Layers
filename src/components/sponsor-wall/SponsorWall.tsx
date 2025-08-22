@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { SponsorGrid } from './SponsorGrid';
-import { LiveAuctionFeed } from './LiveAuctionFeed';
+import { SponsorWallDashboard } from './LiveAuctionFeed';
 import { useState } from 'react';
 
 interface SponsorWallProps {
@@ -25,7 +25,7 @@ export const SponsorWall: React.FC<SponsorWallProps> = ({ className = '' }) => {
             ← Back to Sponsor Wall
           </motion.button>
           
-          <LiveAuctionFeed />
+          <SponsorWallDashboard />
         </div>
       </div>
     );
