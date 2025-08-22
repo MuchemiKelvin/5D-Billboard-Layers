@@ -36,7 +36,7 @@ export const HiddenContentSystem: React.FC<HiddenContentSystemProps> = ({
   const [hiddenContents, setHiddenContents] = useState<HiddenContent[]>([]);
   const [selectedContent, setSelectedContent] = useState<HiddenContent | null>(null);
   const [showUnlockModal, setShowUnlockModal] = useState(false);
-
+  const [unlockProgress, setUnlockProgress] = useState(0);
 
 
   // Generate hidden content for the slot
