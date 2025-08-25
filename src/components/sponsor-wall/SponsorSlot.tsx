@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { HologramEffect } from './HologramEffect';
 import { AROverlaySystem } from './AROverlaySystem';
+import { HologramStepOut } from './HologramStepOut';
 import { dataService, type Company } from '../../data/dataService';
 
 interface SlotData {
@@ -647,6 +648,14 @@ export const SponsorSlot: React.FC<SponsorSlotProps> = ({
 
       {/* AR Overlay System */}
       <AROverlaySystem
+        slotNumber={slotNumber}
+        slotType={slotType}
+        isActive={isActive || false}
+        company={company}
+      />
+
+      {/* Hologram Step-Out System */}
+      <HologramStepOut
         slotNumber={slotNumber}
         slotType={slotType}
         isActive={isActive || false}

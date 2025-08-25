@@ -253,3 +253,82 @@
 .ar-depth-layer-3 {
   filter: drop-shadow(0 0 30px rgba(64, 224, 255, 0.1));
 }
+
+/* Hologram Step-Out Effects */
+@keyframes hologramStepOut {
+  0% {
+    transform: translateY(0px) scale(0.8) rotateX(-45deg);
+    opacity: 0;
+  }
+  50% {
+    transform: translateY(-20px) scale(0.9) rotateX(-20deg);
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateY(-40px) scale(1) rotateX(0deg);
+    opacity: 1;
+  }
+}
+
+@keyframes hologramFloat {
+  0%, 100% {
+    transform: translateY(0px) rotateY(0deg);
+  }
+  25% {
+    transform: translateY(-8px) rotateY(5deg);
+  }
+  50% {
+    transform: translateY(-12px) rotateY(0deg);
+  }
+  75% {
+    transform: translateY(-6px) rotateY(-5deg);
+  }
+}
+
+@keyframes hologramGlow {
+  0%, 100% {
+    box-shadow: 
+      0 0 30px rgba(64, 224, 255, 0.4),
+      0 20px 60px rgba(0, 0, 0, 0.4);
+  }
+  50% {
+    box-shadow: 
+      0 0 50px rgba(64, 224, 255, 0.8),
+      0 30px 80px rgba(0, 0, 0, 0.6);
+  }
+}
+
+/* Hologram Element Classes */
+.hologram-projection {
+  animation: hologramStepOut 1.2s ease-out forwards, hologramFloat 6s ease-in-out infinite 1.2s;
+}
+
+.hologram-projection:hover {
+  animation-play-state: paused;
+}
+
+.hologram-depth-layer {
+  animation: hologramGlow 4s ease-in-out infinite;
+}
+
+/* 3D Perspective Enhancements */
+.hologram-3d-container {
+  perspective: 1000px;
+  transform-style: preserve-3d;
+}
+
+.hologram-3d-element {
+  transform: translateZ(20px);
+  transition: transform 0.3s ease;
+}
+
+.hologram-3d-element:hover {
+  transform: translateZ(40px) rotateY(15deg);
+}
+
+/* Hologram Shadow Effects */
+.hologram-shadow {
+  filter: blur(20px);
+  opacity: 0.6;
+  transform: translateZ(-20px) rotateX(90deg);
+}
