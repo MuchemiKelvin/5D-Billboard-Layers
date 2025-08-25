@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { SponsorSlot } from './SponsorSlot';
+import { DemoControls } from './DemoControls';
 
 
 interface GridSlot {
@@ -18,6 +19,7 @@ export const SponsorGrid: React.FC = () => {
   const [timeUntilNextCycle, setTimeUntilNextCycle] = useState(45);
   const [activeSlots, setActiveSlots] = useState<number[]>([]);
   const [hasAnimated, setHasAnimated] = useState(false);
+  const [cycleTiming, setCycleTiming] = useState(45);
 
 
 
@@ -63,14 +65,14 @@ export const SponsorGrid: React.FC = () => {
         if (prev <= 1) {
           // Cycle complete, move to next cycle
           setCurrentCycle(prevCycle => prevCycle === 4 ? 1 : prevCycle + 1);
-          return 45; // Reset to 45 seconds
+          return cycleTiming; // Use dynamic timing
         }
         return prev - 1;
       });
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [isAutoRotating]);
+  }, [isAutoRotating, cycleTiming]);
 
   // Cinematic entrance animation - trigger on component mount
   useEffect(() => {
@@ -145,6 +147,17 @@ export const SponsorGrid: React.FC = () => {
     setIsAutoRotating(!isAutoRotating);
   };
 
+  // Demo control functions
+  const handleSetCycle = (cycle: number) => {
+    setCurrentCycle(cycle);
+    setTimeUntilNextCycle(cycleTiming);
+  };
+
+  const handleSetTiming = (seconds: number) => {
+    setCycleTiming(seconds);
+    setTimeUntilNextCycle(seconds);
+  };
+
   const getSlotPosition = (slot: GridSlot) => {
     const baseClasses = `relative`;
     
@@ -166,13 +179,23 @@ export const SponsorGrid: React.FC = () => {
       initial="initial"
       animate="animate"
     >
-             {/* Sponsor Grid */}
-       <motion.div 
-         className="grid grid-cols-6 gap-4 auto-rows-[140px] grid-flow-row"
-         initial={{ opacity: 0, y: 30 }}
-         animate={{ opacity: 1, y: 0 }}
-         transition={{ duration: 0.8, delay: 0.3 }}
-       >
+      {/* Demo Controls */}
+      <DemoControls
+        isAutoRotating={isAutoRotating}
+        onToggleAutoRotation={toggleAutoRotation}
+        currentCycle={currentCycle}
+        timeUntilNextCycle={timeUntilNextCycle}
+        onSetCycle={handleSetCycle}
+        onSetTiming={handleSetTiming}
+      />
+
+      {/* Sponsor Grid */}
+      <motion.div 
+        className="grid grid-cols-6 gap-4 auto-rows-[140px] grid-flow-row"
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.3 }}
+      >
         {gridLayout.map((slot, index) => {
           const animationProps = getEntranceAnimation(slot, index);
           

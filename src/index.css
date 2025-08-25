@@ -77,4 +77,101 @@
       0 0 60px rgba(255, 215, 0, 0.1),
       inset 0 0 25px rgba(255, 215, 0, 0.15);
   }
+
+  /* Demo Controls Slider Styling */
+  .slider {
+    background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 50%, #ec4899 100%);
+    height: 8px;
+    border-radius: 4px;
+    outline: none;
+    transition: all 0.3s ease;
+  }
+
+  /* Custom slider styling for demo controls */
+  .slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #3b82f6; /* blue-500 */
+    cursor: pointer;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.3);
+    transition: background 0.2s, box-shadow 0.2s;
+  }
+
+  .slider::-webkit-slider-thumb:hover {
+    background: #2563eb; /* blue-600 */
+    box-shadow: 0 0 0 6px rgba(59, 130, 246, 0.5);
+  }
+
+  .slider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #3b82f6; /* blue-500 */
+    cursor: pointer;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.3);
+    transition: background 0.2s, box-shadow 0.2s;
+  }
+
+  .slider::-moz-range-thumb:hover {
+    background: #2563eb; /* blue-600 */
+    box-shadow: 0 0 0 6px rgba(59, 130, 246, 0.5);
+  }
+
+  .slider::-webkit-slider-track {
+    background: transparent;
+  }
+
+  .slider::-moz-range-track {
+    background: transparent;
+  }
+}
+
+/* Enhanced logo display for sponsor slots */
+.sponsor-logo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.sponsor-logo {
+  max-width: 95%;
+  max-height: 95%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  object-position: center;
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.1));
+  transition: filter 0.3s ease;
+}
+
+.sponsor-logo:hover {
+  filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.2));
+}
+
+/* Ensure logos maintain aspect ratio */
+.sponsor-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+
+/* Responsive logo sizing */
+@media (max-width: 768px) {
+  .sponsor-logo {
+    max-width: 90%;
+    max-height: 90%;
+  }
+}
+
+@media (max-width: 480px) {
+  .sponsor-logo {
+    max-width: 85%;
+    max-height: 85%;
+  }
 }

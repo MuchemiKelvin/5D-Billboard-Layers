@@ -229,10 +229,6 @@ export const SponsorSlot: React.FC<SponsorSlotProps> = ({
             </span>
           </div>
 
-                     {/* Countdown Timer - REMOVED */}
-
-          {/* Removed Cycle Indicator */}
-          
           {company && isActive ? (
             <motion.div
               key={`${company.id}-${Date.now()}`}
@@ -240,40 +236,47 @@ export const SponsorSlot: React.FC<SponsorSlotProps> = ({
               initial="initial"
               animate="animate"
               exit="exit"
-              className="flex flex-col items-center justify-center h-full"
+              className="flex flex-col items-center justify-center h-full px-2"
             >
-              <div className="mb-4">
-                <img 
-                  src={company.logo} 
-                  alt={`${company.name} logo`}
-                  className="w-24 h-24 mx-auto object-contain"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.style.display = 'none';
-                    target.nextElementSibling?.classList.remove('hidden');
-                  }}
-                />
-                <div className="hidden w-24 h-24 mx-auto bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold text-lg">
-                  {company.name.substring(0, 2).toUpperCase()}
+              {/* Logo Container - 85% of slot height */}
+              <div className="mb-1 flex-shrink-0 sponsor-logo-container" style={{ height: '85%', width: '100%' }}>
+                <div className="h-full w-full flex items-center justify-center">
+                  <img 
+                    src={company.logo} 
+                    alt={`${company.name} logo`}
+                    className="sponsor-logo"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                      target.nextElementSibling?.classList.remove('hidden');
+                    }}
+                  />
+                  <div className="hidden w-full h-full bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center text-white font-bold text-2xl">
+                    {company.name.substring(0, 2).toUpperCase()}
+                  </div>
                 </div>
               </div>
-              <div className="text-xl font-bold text-white mb-3">
+              
+              {/* Company Name */}
+              <div className="text-lg font-bold text-white mb-2 text-center leading-tight">
                 {company.name}
               </div>
-              <div className="text-lg text-blue-300 mb-3 font-semibold">
+              
+              {/* Features */}
+              <div className="text-sm text-blue-300 font-semibold text-center">
                 5D • AR • HOLOGRAM
               </div>
             </motion.div>
           ) : (
-            <div className="text-center flex flex-col items-center justify-center h-full">
-              <div className="text-2xl font-bold text-white mb-3">
+            <div className="text-center flex flex-col items-center justify-center h-full px-2">
+              <div className="text-xl font-bold text-white mb-3">
                 MAIN SPONSOR
               </div>
-              <div className="text-lg text-blue-300 mb-3 font-semibold">
+              <div className="text-sm text-blue-300 mb-3 font-semibold">
                 5D • AR • HOLOGRAM
               </div>
               {slotData && (
-                <div className="text-lg text-gray-400 font-mono">
+                <div className="text-sm text-gray-400 font-mono">
                   Reserve: EUR {convertToEUR(slotData.reservePrice || 0)}
                 </div>
               )}
@@ -286,10 +289,6 @@ export const SponsorSlot: React.FC<SponsorSlotProps> = ({
     if (slotType === 'live-bidding') {
       return (
         <div className="text-center h-full flex flex-col justify-center">
-                     {/* Countdown Timer - REMOVED */}
-
-          {/* Removed Cycle Indicator */}
-
           {company && isActive ? (
             <motion.div
               key={`${company.id}-${Date.now()}`}
@@ -297,41 +296,53 @@ export const SponsorSlot: React.FC<SponsorSlotProps> = ({
               initial="initial"
               animate="animate"
               exit="exit"
+              className="flex flex-col items-center justify-center h-full px-2"
             >
-              <div className="mb-2">
-                <img 
-                  src={company.logo} 
-                  alt={`${company.name} logo`}
-                  className="w-12 h-12 mx-auto object-contain"
-                  onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.style.display = 'none';
-                    target.nextElementSibling?.classList.remove('hidden');
-                  }}
-                />
-                <div className="hidden w-12 h-12 mx-auto bg-gradient-to-br from-green-500 to-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-xs">
-                  {company.name.substring(0, 2).toUpperCase()}
+              {/* Logo Container - 85% of slot height */}
+              <div className="mb-1 flex-shrink-0 sponsor-logo-container" style={{ height: '85%', width: '100%' }}>
+                <div className="h-full w-full flex items-center justify-center">
+                  <img 
+                    src={company.logo} 
+                    alt={`${company.name} logo`}
+                    className="sponsor-logo"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                      target.nextElementSibling?.classList.remove('hidden');
+                    }}
+                  />
+                  <div className="hidden w-full h-full bg-gradient-to-br from-green-500 to-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-lg">
+                    {company.name.substring(0, 2).toUpperCase()}
+                  </div>
                 </div>
               </div>
-              <div className="text-xs font-medium text-gray-300 mb-1">
+              
+              {/* Company Name */}
+              <div className="text-xs font-medium text-gray-300 mb-1 text-center leading-tight">
                 {company.name}
               </div>
-              <div className="text-xs text-green-400 font-bold mb-2">
+              
+              {/* Live Bidding Badge */}
+              <div className="text-xs text-green-400 font-bold mb-1">
                 LIVE BIDDING
               </div>
+              
+              {/* Bid Amount */}
               {liveBidAmount > 0 && (
-                <div className="text-lg font-bold text-green-400 mb-1">
+                <div className="text-sm font-bold text-green-400 mb-1">
                   €{liveBidAmount.toLocaleString()}
                 </div>
               )}
+              
+              {/* Total Bids */}
               {totalBids > 0 && (
-                <div className="text-xs text-orange-400 mt-1">
+                <div className="text-xs text-orange-400">
                   {totalBids} bids
                 </div>
               )}
             </motion.div>
           ) : (
-            <div className="text-center">
+            <div className="text-center flex flex-col items-center justify-center h-full px-2">
               <div className="text-sm font-bold text-green-400 mb-2">
                 LIVE BIDDING
               </div>
@@ -350,13 +361,9 @@ export const SponsorSlot: React.FC<SponsorSlotProps> = ({
       );
     }
 
-    // Standard slot content - Updated to match mockup exactly
+    // Standard slot content - Enhanced logo display
     return (
       <div className="text-center h-full flex flex-col justify-center">
-                 {/* Countdown Timer - REMOVED */}
-
-        {/* Removed Cycle Indicator */}
-
         {company && isActive ? (
           <motion.div
             key={`${company.id}-${Date.now()}`}
@@ -364,62 +371,68 @@ export const SponsorSlot: React.FC<SponsorSlotProps> = ({
             initial="initial"
             animate="animate"
             exit="exit"
+            className="flex flex-col items-center justify-center h-full px-2"
           >
-            <div className="mb-2">
-              <motion.img 
-                src={company.logo} 
-                alt={`${company.name} logo`}
-                className="w-10 h-10 mx-auto object-contain"
-                animate={isActive ? {
-                  scale: [1, 1.03, 1, 1.02, 1],
-                  filter: [
-                    "brightness(1)",
-                    "brightness(1.08)",
-                    "brightness(1)",
-                    "brightness(1.04)",
-                    "brightness(1)"
-                  ]
-                } : {}}
-                transition={{
-                  duration: 2.5,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  times: [0, 0.2, 0.4, 0.6, 1]
-                }}
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.style.display = 'none';
-                  target.nextElementSibling?.classList.remove('hidden');
-                }}
-              />
-              <motion.div 
-                className="hidden w-10 h-10 mx-auto bg-gradient-to-br from-gray-500 to-gray-700 rounded-lg flex items-center justify-center text-white font-bold text-xs"
-                animate={isActive ? {
-                  scale: [1, 1.03, 1, 1.02, 1],
-                  filter: [
-                    "brightness(1)",
-                    "brightness(1.08)",
-                    "brightness(1)",
-                    "brightness(1.04)",
-                    "brightness(1)"
-                  ]
-                } : {}}
-                transition={{
-                  duration: 2.5,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  times: [0, 0.2, 0.4, 0.6, 1]
-                }}
-              >
-                {company.name.substring(0, 2).toUpperCase()}
-              </motion.div>
+            {/* Logo Container - 85% of slot height */}
+            <div className="mb-2 flex-shrink-0 sponsor-logo-container" style={{ height: '85%', width: '100%' }}>
+              <div className="h-full w-full flex items-center justify-center">
+                <motion.img 
+                  src={company.logo} 
+                  alt={`${company.name} logo`}
+                  className="sponsor-logo"
+                  animate={isActive ? {
+                    scale: [1, 1.03, 1, 1.02, 1],
+                    filter: [
+                      "brightness(1)",
+                      "brightness(1.08)",
+                      "brightness(1)",
+                      "brightness(1.04)",
+                      "brightness(1)"
+                    ]
+                  } : {}}
+                  transition={{
+                    duration: 2.5,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    times: [0, 0.2, 0.4, 0.6, 1]
+                  }}
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = 'none';
+                    target.nextElementSibling?.classList.remove('hidden');
+                  }}
+                />
+                <motion.div 
+                  className="hidden w-full h-full bg-gradient-to-br from-gray-500 to-gray-700 rounded-lg flex items-center justify-center text-white font-bold text-lg"
+                  animate={isActive ? {
+                    scale: [1, 1.03, 1, 1.02, 1],
+                    filter: [
+                      "brightness(1)",
+                      "brightness(1.08)",
+                      "brightness(1)",
+                      "brightness(1.04)",
+                      "brightness(1)"
+                    ]
+                  } : {}}
+                  transition={{
+                    duration: 2.5,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                    times: [0, 0.2, 0.4, 0.6, 1]
+                  }}
+                >
+                  {company.name.substring(0, 2).toUpperCase()}
+                </motion.div>
+              </div>
             </div>
-            <div className="text-xs font-medium text-gray-300 mb-1 truncate">
+            
+            {/* Company Name */}
+            <div className="text-xs font-medium text-gray-300 text-center leading-tight truncate w-full">
               {company.name}
             </div>
           </motion.div>
         ) : (
-          <div className="text-center">
+          <div className="text-center flex flex-col items-center justify-center h-full px-2">
             <div className="text-sm font-medium text-gray-400 mb-2">
               SLOT {slotNumber}
             </div>
@@ -673,7 +686,7 @@ export const SponsorSlot: React.FC<SponsorSlotProps> = ({
       </div>
 
       {/* Content Layer */}
-      <div className="relative z-10 p-3 h-full flex items-center justify-center">
+      <div className="relative z-10 p-2 h-full flex items-center justify-center">
         {getSlotContent()}
       </div>
 
