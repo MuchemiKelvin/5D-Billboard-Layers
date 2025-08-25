@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { HologramEffect } from './HologramEffect';
+import { AROverlaySystem } from './AROverlaySystem';
 import { dataService, type Company } from '../../data/dataService';
 
 interface SlotData {
@@ -643,6 +644,14 @@ export const SponsorSlot: React.FC<SponsorSlotProps> = ({
 
       {/* Holographic Effects Layer */}
       <HologramEffect {...hologramSettings} />
+
+      {/* AR Overlay System */}
+      <AROverlaySystem
+        slotNumber={slotNumber}
+        slotType={slotType}
+        isActive={isActive || false}
+        company={company}
+      />
 
       {/* Slot Number - Top Left with Rotation Indicator */}
       <div className="absolute top-2 left-2 flex items-center gap-2">

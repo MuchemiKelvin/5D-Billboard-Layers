@@ -175,3 +175,81 @@
     max-height: 85%;
   }
 }
+
+/* AR Overlay System Animations */
+@keyframes arFloat {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-8px) rotate(1deg);
+  }
+  50% {
+    transform: translateY(-12px) rotate(0deg);
+  }
+  75% {
+    transform: translateY(-6px) rotate(-1deg);
+  }
+}
+
+@keyframes arGlow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(64, 224, 255, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(64, 224, 255, 0.8), 0 0 60px rgba(64, 224, 255, 0.4);
+  }
+}
+
+@keyframes arPulse {
+  0%, 100% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes arScan {
+  0% {
+    transform: translateY(-100%) rotate(0deg);
+  }
+  100% {
+    transform: translateY(200%) rotate(360deg);
+  }
+}
+
+/* AR Element Base Styles */
+.ar-logo-hologram {
+  animation: arFloat 6s ease-in-out infinite;
+}
+
+.ar-info-panel {
+  animation: arGlow 4s ease-in-out infinite;
+}
+
+.ar-product-showcase {
+  animation: arPulse 3s ease-in-out infinite;
+}
+
+/* Enhanced AR Hover Effects */
+.ar-element:hover {
+  animation-play-state: paused;
+  transform: scale(1.1) translateY(-5px);
+  transition: all 0.3s ease;
+}
+
+/* AR Depth Layers */
+.ar-depth-layer-1 {
+  filter: drop-shadow(0 0 10px rgba(64, 224, 255, 0.3));
+}
+
+.ar-depth-layer-2 {
+  filter: drop-shadow(0 0 20px rgba(64, 224, 255, 0.2));
+}
+
+.ar-depth-layer-3 {
+  filter: drop-shadow(0 0 30px rgba(64, 224, 255, 0.1));
+}
