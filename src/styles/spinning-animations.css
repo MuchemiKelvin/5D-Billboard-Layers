@@ -1,0 +1,294 @@
+/* Spinning Slot Layer - Cross-Platform Performance Optimizations */
+
+/* Base spinning animation classes */
+.spinning-slot-layer {
+  /* Hardware acceleration */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+  
+  /* Smooth animations */
+  will-change: transform;
+  
+  /* Prevent layout thrashing */
+  contain: layout style paint;
+}
+
+/* Featured spinning slot styling - matches mockup */
+.featured-spinning-slot {
+  /* Enhanced styling for the featured slot */
+  border: 2px solid rgba(255, 193, 7, 0.8) !important;
+  background: rgba(255, 193, 7, 0.1) !important;
+  box-shadow: 
+    0 0 20px rgba(255, 193, 7, 0.4),
+    0 0 40px rgba(255, 193, 7, 0.2),
+    inset 0 0 20px rgba(255, 193, 7, 0.1) !important;
+}
+
+/* Different styling for slot 24 (secondary) */
+.featured-spinning-slot.slot-secondary {
+  border: 2px solid rgba(251, 146, 60, 0.8) !important;
+  background: rgba(251, 146, 60, 0.1) !important;
+  box-shadow: 
+    0 0 18px rgba(251, 146, 60, 0.4),
+    0 0 35px rgba(251, 146, 60, 0.2),
+    inset 0 0 18px rgba(251, 146, 60, 0.1) !important;
+}
+
+/* Mockup-inspired slot styling */
+.spinning-slot-layer:not(.featured-spinning-slot) {
+  /* Standard slot styling to match mockup */
+  border: 1px solid rgba(255, 193, 7, 0.3);
+  background: rgba(30, 41, 59, 0.8);
+  border-radius: 8px;
+}
+
+/* Performance optimizations for different devices */
+@media (max-width: 768px) {
+  /* Tablet optimization */
+  .spinning-slot-layer {
+    /* Reduce animation complexity on smaller devices */
+    animation-timing-function: ease-out;
+  }
+}
+
+@media (max-device-pixel-ratio: 1.5) {
+  /* Lower DPI devices (older tablets/billboards) */
+  .spinning-slot-layer {
+    /* Reduce animation frequency */
+    animation-duration: 1.2s;
+    transform: translateZ(0) scale3d(1, 1, 1);
+  }
+}
+
+/* Android-specific optimizations */
+@supports (-webkit-appearance: none) {
+  .spinning-slot-layer {
+    /* Android Chrome optimization */
+    transform: translate3d(0, 0, 0);
+    -webkit-transform: translate3d(0, 0, 0);
+  }
+}
+
+/* iOS-specific optimizations */
+@supports (-webkit-touch-callout: none) {
+  .spinning-slot-layer {
+    /* iOS Safari optimization */
+    -webkit-backface-visibility: hidden;
+    -webkit-perspective: 1000px;
+    -webkit-transform: translateZ(0);
+  }
+}
+
+/* 5D Beamer system optimizations (high-performance displays) */
+@media (min-width: 1920px) and (min-height: 1080px) {
+  .spinning-slot-layer {
+    /* Enhanced effects for large displays */
+    filter: brightness(1.05) contrast(1.02);
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+/* Walking billboard optimization (outdoor displays) */
+@media (orientation: landscape) and (min-width: 1024px) {
+  .spinning-slot-layer {
+    /* Optimize for outdoor visibility */
+    filter: brightness(1.1) saturate(1.1);
+    animation-duration: 0.8s;
+  }
+}
+
+/* Reduced motion support (accessibility) */
+@media (prefers-reduced-motion: reduce) {
+  .spinning-slot-layer {
+    animation: none;
+    transform: none;
+  }
+}
+
+/* Performance monitoring classes */
+.spinning-slot-layer.performance-optimized {
+  /* Conservative settings for stability */
+  animation-duration: 1.5s;
+  transform: translateZ(0);
+}
+
+.spinning-slot-layer.performance-full {
+  /* Full effects for capable devices */
+  animation-duration: 0.8s;
+  filter: brightness(1.02);
+  transform: translateZ(0) rotateX(0.1deg);
+}
+
+.spinning-slot-layer.performance-reduced {
+  /* Minimal effects for low-end devices */
+  animation-duration: 2s;
+  transform: translateZ(0);
+  filter: none;
+}
+
+/* Slot type specific optimizations */
+.spinning-slot-layer.slot-main-sponsor {
+  /* Enhanced effects for main sponsor slots */
+  z-index: 10;
+  filter: brightness(1.05) drop-shadow(0 0 10px rgba(255, 255, 255, 0.1));
+}
+
+.spinning-slot-layer.slot-live-bidding {
+  /* Attention-grabbing effects for bidding slots */
+  z-index: 5;
+  animation-timing-function: ease-in-out;
+}
+
+.spinning-slot-layer.slot-standard {
+  /* Standard slots with minimal overhead */
+  z-index: 1;
+  transform: translateZ(0);
+}
+
+/* Framework integration styles */
+.billboard-grid {
+  /* 24-slot grid container optimizations */
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  gap: 8px;
+  contain: layout;
+}
+
+.billboard-grid .spinning-slot-layer {
+  /* Individual slot positioning */
+  position: relative;
+  overflow: visible; /* Allow animations to extend beyond bounds */
+}
+
+/* Device-specific performance classes */
+.device-tablet .spinning-slot-layer {
+  /* Tablet-specific optimizations */
+  animation-duration: 1.2s;
+  transform: translateZ(0) scale3d(0.98, 0.98, 1);
+}
+
+.device-billboard .spinning-slot-layer {
+  /* Walking billboard optimizations */
+  animation-duration: 0.9s;
+  filter: brightness(1.1) contrast(1.05);
+}
+
+.device-beamer .spinning-slot-layer {
+  /* 5D Beamer system optimizations */
+  animation-duration: 0.7s;
+  filter: brightness(1.05) saturate(1.05);
+  transform: translateZ(0) perspective(1200px);
+}
+
+/* Animation keyframes for cross-platform compatibility */
+@keyframes subtle-spin {
+  0% { transform: translateZ(0) rotate(0deg) translateX(0px); }
+  25% { transform: translateZ(0) rotate(2deg) translateX(5px); }
+  50% { transform: translateZ(0) rotate(0deg) translateX(0px); }
+  75% { transform: translateZ(0) rotate(-2deg) translateX(-3px); }
+  100% { transform: translateZ(0) rotate(0deg) translateX(0px); }
+}
+
+@keyframes gentle-float {
+  0%, 100% { transform: translateZ(0) translateY(0px); }
+  50% { transform: translateZ(0) translateY(-2px); }
+}
+
+@keyframes minimal-wobble {
+  0%, 100% { transform: translateZ(0) rotate(0deg); }
+  33% { transform: translateZ(0) rotate(1deg); }
+  66% { transform: translateZ(0) rotate(-1deg); }
+}
+
+/* WebKit specific optimizations */
+@supports (-webkit-transform: translateZ(0)) {
+  .spinning-slot-layer {
+    -webkit-transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    -webkit-font-smoothing: subpixel-antialiased;
+  }
+}
+
+/* Firefox specific optimizations */
+@supports (-moz-appearance: none) {
+  .spinning-slot-layer {
+    transform: translateZ(0);
+    will-change: transform;
+  }
+}
+
+/* Edge/IE specific optimizations */
+@supports (-ms-ime-align: auto) {
+  .spinning-slot-layer {
+    transform: translateZ(0);
+    animation-fill-mode: both;
+  }
+}
+
+/* Featured spinning slot glow effect - matches mockup */
+.featured-spinning-slot-glow {
+  box-shadow:
+    0 0 30px rgba(255, 193, 7, 0.6),
+    0 0 60px rgba(255, 193, 7, 0.4),
+    0 0 90px rgba(255, 193, 7, 0.2),
+    inset 0 0 30px rgba(255, 193, 7, 0.2);
+  animation: featuredSlotPulse 2s ease-in-out infinite;
+}
+
+@keyframes featuredSlotPulse {
+  0%, 100% {
+    box-shadow:
+      0 0 30px rgba(255, 193, 7, 0.6),
+      0 0 60px rgba(255, 193, 7, 0.4),
+      0 0 90px rgba(255, 193, 7, 0.2),
+      inset 0 0 30px rgba(255, 193, 7, 0.2);
+  }
+  50% {
+    box-shadow:
+      0 0 40px rgba(255, 193, 7, 0.8),
+      0 0 80px rgba(255, 193, 7, 0.6),
+      0 0 120px rgba(255, 193, 7, 0.3),
+      inset 0 0 40px rgba(255, 193, 7, 0.3);
+  }
+}
+
+/* Enhanced spinning slot circular element - Primary (Slot 8) */
+.spinning-circular-element {
+  background: radial-gradient(circle, #fbbf24 0%, #f59e0b 50%, #d97706 100%);
+  animation: spinningElementRotate 3s linear infinite, spinningElementPulse 1.5s ease-in-out infinite alternate;
+}
+
+/* Secondary spinning element - (Slot 24) */
+.spinning-circular-element-secondary {
+  background: radial-gradient(circle, #fb923c 0%, #ea580c 50%, #c2410c 100%);
+  animation: spinningElementRotate 3.5s linear infinite, spinningElementPulseSecondary 1.8s ease-in-out infinite alternate;
+}
+
+@keyframes spinningElementRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes spinningElementPulse {
+  0% { 
+    transform: scale(1);
+    filter: brightness(1) drop-shadow(0 0 10px rgba(251, 191, 36, 0.5));
+  }
+  100% { 
+    transform: scale(1.1);
+    filter: brightness(1.2) drop-shadow(0 0 20px rgba(251, 191, 36, 0.8));
+  }
+}
+
+@keyframes spinningElementPulseSecondary {
+  0% { 
+    transform: scale(1);
+    filter: brightness(1) drop-shadow(0 0 10px rgba(251, 146, 60, 0.5));
+  }
+  100% { 
+    transform: scale(1.08);
+    filter: brightness(1.15) drop-shadow(0 0 18px rgba(251, 146, 60, 0.7));
+  }
+}

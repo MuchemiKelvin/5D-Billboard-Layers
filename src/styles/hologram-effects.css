@@ -1,0 +1,442 @@
+/* BeamerShow Layer 2: Hologram Effects - Maya's Design Templates */
+/* 10-15s Loop Duration • Alpha Channel Support • Hardware Accelerated */
+
+/* Base hologram layer styling */
+.hologram-layer-container {
+  position: relative;
+  overflow: hidden;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Hologram effect base classes */
+.hologram-glow {
+  filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.5));
+  backdrop-filter: blur(0.5px);
+}
+
+.hologram-spin {
+  transform-origin: center center;
+  animation-fill-mode: both;
+}
+
+.hologram-light-reflection {
+  position: relative;
+  overflow: hidden;
+  mask: linear-gradient(45deg, transparent, white, transparent);
+  -webkit-mask: linear-gradient(45deg, transparent, white, transparent);
+}
+
+.hologram-combined {
+  filter: drop-shadow(0 0 15px rgba(0, 255, 255, 0.6));
+  backdrop-filter: blur(1px);
+}
+
+/* New: Video-based hologram effects with alpha channel support */
+.hologram-video {
+  position: relative;
+  overflow: hidden;
+  filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.4));
+  backdrop-filter: blur(0.8px);
+}
+
+/* Video fallback styling */
+.hologram-video-fallback {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.3) 0%, rgba(0, 255, 255, 0.2) 50%, transparent 100%);
+  animation: video-fallback-pulse 2s ease-in-out infinite;
+}
+
+@keyframes video-fallback-pulse {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.02);
+  }
+}
+
+/* Enhanced video overlay effects */
+.hologram-video-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 30% 30%,
+    rgba(0, 255, 255, 0.1) 0%,
+    transparent 50%
+  );
+  pointer-events: none;
+}
+
+/* Glow Pulse Animation - 12s duration */
+@keyframes glow-pulse-animation {
+  0%, 100% {
+    filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.5)) brightness(1);
+    transform: scale(1);
+  }
+  25% {
+    filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.8)) brightness(1.1);
+    transform: scale(1.02);
+  }
+  50% {
+    filter: drop-shadow(0 0 30px rgba(59, 130, 246, 1)) brightness(1.2);
+    transform: scale(1.05);
+  }
+  75% {
+    filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.8)) brightness(1.1);
+    transform: scale(1.02);
+  }
+}
+
+.glow-pulse-animation {
+  animation: glow-pulse-animation 12s ease-in-out infinite;
+}
+
+/* Energy Spin Animation - 14s duration */
+@keyframes energy-spin-animation {
+  0% {
+    transform: rotate(0deg) scale(1);
+    filter: hue-rotate(0deg) brightness(1);
+  }
+  25% {
+    transform: rotate(90deg) scale(1.02);
+    filter: hue-rotate(90deg) brightness(1.1);
+  }
+  50% {
+    transform: rotate(180deg) scale(1.05);
+    filter: hue-rotate(180deg) brightness(1.2);
+  }
+  75% {
+    transform: rotate(270deg) scale(1.02);
+    filter: hue-rotate(270deg) brightness(1.1);
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+    filter: hue-rotate(360deg) brightness(1);
+  }
+}
+
+.energy-spin-animation {
+  animation: energy-spin-animation 14s linear infinite;
+}
+
+/* Light Sweep Animation - 10s duration */
+@keyframes light-sweep-animation {
+  0% {
+    background-position: -100% 0;
+    opacity: 0.5;
+  }
+  50% {
+    background-position: 50% 0;
+    opacity: 1;
+  }
+  100% {
+    background-position: 200% 0;
+    opacity: 0.5;
+  }
+}
+
+.light-sweep-animation {
+  animation: light-sweep-animation 10s ease-in-out infinite;
+  background: linear-gradient(
+    45deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.3) 50%,
+    transparent 70%
+  );
+  background-size: 200% 200%;
+}
+
+/* Combined Hologram Animation - 15s duration */
+@keyframes hologram-combo-animation {
+  0%, 100% {
+    transform: rotate(0deg) scale(1);
+    filter: 
+      drop-shadow(0 0 10px rgba(59, 130, 246, 0.5))
+      hue-rotate(0deg) 
+      brightness(1);
+    background-position: -100% 0;
+  }
+  20% {
+    transform: rotate(72deg) scale(1.01);
+    filter: 
+      drop-shadow(0 0 20px rgba(0, 255, 255, 0.8))
+      hue-rotate(72deg) 
+      brightness(1.1);
+    background-position: 0% 0;
+  }
+  40% {
+    transform: rotate(144deg) scale(1.03);
+    filter: 
+      drop-shadow(0 0 30px rgba(255, 0, 255, 1))
+      hue-rotate(144deg) 
+      brightness(1.2);
+    background-position: 50% 0;
+  }
+  60% {
+    transform: rotate(216deg) scale(1.01);
+    filter: 
+      drop-shadow(0 0 20px rgba(255, 255, 0, 0.8))
+      hue-rotate(216deg) 
+      brightness(1.1);
+    background-position: 100% 0;
+  }
+  80% {
+    transform: rotate(288deg) scale(1.02);
+    filter: 
+      drop-shadow(0 0 25px rgba(0, 255, 0, 0.9))
+      hue-rotate(288deg) 
+      brightness(1.15);
+    background-position: 150% 0;
+  }
+}
+
+.hologram-combo-animation {
+  animation: hologram-combo-animation 15s ease-in-out infinite;
+  background: linear-gradient(
+    45deg,
+    transparent 20%,
+    rgba(255, 255, 255, 0.2) 30%,
+    rgba(0, 255, 255, 0.3) 50%,
+    rgba(255, 255, 255, 0.2) 70%,
+    transparent 80%
+  );
+  background-size: 300% 300%;
+}
+
+/* Radial gradient utility for glow effects */
+.bg-gradient-radial {
+  background: radial-gradient(circle, var(--tw-gradient-stops));
+}
+
+/* Performance optimizations for different devices */
+
+/* High-performance displays (Beamer systems) */
+@media (min-width: 1920px) and (min-height: 1080px) {
+  .hologram-layer-container {
+    filter: contrast(1.1) saturate(1.2);
+  }
+  
+  .glow-pulse-animation {
+    animation-duration: 10s; /* Faster on high-end displays */
+  }
+  
+  .energy-spin-animation {
+    animation-duration: 12s;
+  }
+  
+  .hologram-video {
+    filter: drop-shadow(0 0 25px rgba(0, 255, 255, 0.5));
+  }
+}
+
+/* Tablet optimization (iPad sync) */
+@media (max-width: 1024px) {
+  .hologram-layer-container {
+    filter: contrast(1.05) saturate(1.1);
+  }
+  
+  .glow-pulse-animation {
+    animation-duration: 14s; /* Slightly slower for battery efficiency */
+  }
+  
+  .energy-spin-animation {
+    animation-duration: 16s;
+  }
+  
+  .hologram-combo-animation {
+    animation-duration: 18s;
+  }
+  
+  .hologram-video {
+    filter: drop-shadow(0 0 15px rgba(0, 255, 255, 0.3));
+  }
+}
+
+/* Reduced motion accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .glow-pulse-animation,
+  .energy-spin-animation,
+  .light-sweep-animation,
+  .hologram-combo-animation {
+    animation: none !important;
+  }
+  
+  .hologram-layer-container {
+    filter: opacity(0.8);
+  }
+  
+  .hologram-video {
+    filter: opacity(0.9);
+  }
+}
+
+/* Hardware acceleration for all hologram effects */
+.hologram-layer-container,
+.hologram-layer-container * {
+  transform: translateZ(0);
+  will-change: transform, opacity, filter;
+}
+
+/* Beamer projection specific optimizations */
+@media (min-aspect-ratio: 16/9) {
+  .hologram-layer-container {
+    /* Enhanced brightness for projection */
+    filter: brightness(1.1) contrast(1.1);
+  }
+  
+  .hologram-video {
+    /* Enhanced video effects for projection */
+    filter: brightness(1.15) contrast(1.15) drop-shadow(0 0 30px rgba(0, 255, 255, 0.6));
+  }
+}
+
+/* Enhanced Alpha channel video support styling */
+video.hologram-video {
+  object-fit: cover;
+  mix-blend-mode: screen;
+  opacity: 0.8;
+  transition: opacity 0.3s ease-in-out;
+}
+
+video.hologram-video:hover {
+  opacity: 1;
+}
+
+/* Video loading states */
+.hologram-video-loading {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, rgba(0, 255, 255, 0.2) 0%, transparent 70%);
+  animation: video-loading-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes video-loading-pulse {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(0.95);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.05);
+  }
+}
+
+/* Enhanced Hologram frame corner effects */
+.hologram-frame-corner {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border: 2px solid rgba(0, 255, 255, 0.6);
+  background: rgba(0, 255, 255, 0.1);
+  
+  /* Animated glow */
+  animation: corner-glow 3s ease-in-out infinite alternate;
+}
+
+@keyframes corner-glow {
+  0% {
+    box-shadow: 0 0 5px rgba(0, 255, 255, 0.3);
+    border-color: rgba(0, 255, 255, 0.6);
+  }
+  100% {
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.8);
+    border-color: rgba(0, 255, 255, 1);
+  }
+}
+
+/* Layer 2 active indicator */
+.layer-2-active {
+  box-shadow: 
+    inset 0 0 20px rgba(59, 130, 246, 0.2),
+    0 0 20px rgba(59, 130, 246, 0.3);
+  border: 1px solid rgba(59, 130, 246, 0.5);
+}
+
+/* Development mode indicators */
+.dev-hologram-info {
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #00ffff;
+  padding: 2px 6px;
+  border-radius: 3px;
+  border: 1px solid rgba(0, 255, 255, 0.3);
+}
+
+/* Slot duration indicator styling */
+.slot-duration-indicator {
+  font-family: 'Courier New', monospace;
+  font-size: 9px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #00ffff;
+  padding: 1px 4px;
+  border-radius: 2px;
+  border: 1px solid rgba(0, 255, 255, 0.2);
+}
+
+/* Enhanced transparency effects for alpha channel support */
+.hologram-alpha-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 255, 255, 0.05) 0%,
+    transparent 25%,
+    transparent 75%,
+    rgba(59, 130, 246, 0.05) 100%
+  );
+  pointer-events: none;
+  mix-blend-mode: overlay;
+}
+
+/* Video error fallback styling */
+.hologram-video-error {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at center,
+    rgba(255, 0, 0, 0.1) 0%,
+    rgba(255, 0, 0, 0.05) 50%,
+    transparent 100%
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 0, 0, 0.6);
+  font-size: 12px;
+  font-family: 'Courier New', monospace;
+}
+
+/* Enhanced performance for video playback */
+.hologram-video-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: inherit;
+}
+
+/* Video quality optimization */
+@media (min-resolution: 2dppx) {
+  .hologram-video {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
+/* Mobile video optimization */
+@media (max-width: 768px) {
+  .hologram-video {
+    object-fit: contain;
+    opacity: 0.9;
+  }
+  
+  .hologram-video-container {
+    border-radius: 8px;
+  }
+}

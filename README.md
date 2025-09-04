@@ -1,5 +1,59 @@
 # 🚀 5D Sponsor Wall - Futuristic Digital Advertising Platform
 
+## 🚀 **Quick Start**
+
+### Frontend
+```bash
+npm install
+npm run dev
+```
+
+### Backend
+```bash
+cd backend
+npm install
+npm start
+```
+
+### API Testing
+When you start the backend, you'll see:
+```
+🧪 API Tester: http://localhost:5000/api-tester
+📊 Test all your APIs at: http://localhost:5000/api-tester
+```
+
+Open that link to test all your APIs!
+
+---
+
+## 🎯 **Layer Implementation Status**
+
+### ✅ **Layer 1: Static Sponsor Logos** - COMPLETED
+- 24-slot rotating system
+- Static PNG/JPG sponsor logos
+- 15-30 second display duration
+- Central dashboard for content management
+
+### ✅ **Layer 2: Hologram Effects** - COMPLETED
+- Transparent background animations (.mp4/.webm with alpha channel)
+- Basic motion: glowing, spinning, light reflections
+- WebGL/Canvas-based effects with CSS fallbacks
+- Continuous looping until slot ends
+
+### ✅ **Layer 3: AR Effects** - COMPLETED
+- QR/NFC triggered AR overlays
+- 4x daily rotation (morning, afternoon, evening, night)
+- AR overlay types: mascots, products, interactive, 3D models
+- <5 second load time target with fallbacks
+
+### 🔄 **Next: Layer Integration & Testing**
+- Cross-layer synchronization
+- Performance optimization
+- Multi-device testing
+- Final demo preparation
+
+---
+
 ## 📖 **Project Overview**
 
 The **5D Sponsor Wall** is a cutting-edge, immersive digital advertising platform that combines **Augmented Reality (AR)**, **3D Holographic Effects**, and **Interactive Visual Experiences** to create the most engaging sponsor slot system ever built.

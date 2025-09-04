@@ -1,0 +1,56 @@
+{
+  "name": "beamershow-backend",
+  "version": "2.0.0",
+  "description": "Backend for BeamerShow 24-Slot System (AR/AI/Hologram)",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "test": "jest",
+    "test:apis": "node simple-test.js",
+    "test:curl": "bash curl-tests.sh",
+    "test:ps": "powershell -ExecutionPolicy Bypass -File test-apis.ps1",
+    "setup": "node setup-firebase.js",
+    "setup:firebase": "node setup-firebase.js",
+    "test:connection": "node test-connection.js",
+    "migrate": "node src/database/migrate.js",
+    "seed": "node src/database/seed.js"
+  },
+  "keywords": [
+    "beamershow",
+    "5d",
+    "ar",
+    "hologram",
+    "slot-system"
+  ],
+  "author": "Kelvin - Kardiverse Technologies Ltd.",
+  "license": "MIT",
+  "dependencies": {
+    "aws-sdk": "^2.1692.0",
+    "bcryptjs": "^2.4.3",
+    "compression": "^1.7.4",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "express-validator": "^7.0.1",
+    "firebase-admin": "^11.11.0",
+    "helmet": "^7.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "node-cron": "^3.0.2",
+    "qrcode": "^1.5.3",
+    "rate-limiter-flexible": "^2.4.2",
+    "sharp": "^0.32.5",
+    "socket.io": "^4.7.2",
+    "uuid": "^9.0.0",
+    "winston": "^3.10.0"
+  },
+  "devDependencies": {
+    "jest": "^29.6.2",
+    "nodemon": "^3.0.1",
+    "supertest": "^6.3.3"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}

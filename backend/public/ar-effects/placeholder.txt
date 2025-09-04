@@ -1,0 +1,34 @@
+🥽 AR Effects Model Files
+
+This directory should contain your AR model files and assets for Layer 3.
+
+Required Files:
+- morning-mascot.glb (Morning Energy Mascot 3D model)
+- afternoon-mascot.glb (Afternoon Work Mascot 3D model)
+- evening-mascot.glb (Evening Relaxation Mascot 3D model)
+- night-mascot.glb (Night Owl Mascot 3D model)
+- breakfast-products.glb (Morning product showcase)
+- lunch-products.glb (Afternoon product demo)
+- dinner-products.glb (Evening product showcase)
+- night-products.glb (Night product demo)
+
+Model Specifications:
+- Format: GLTF/GLB (preferred) or FBX
+- Resolution: Optimized for mobile devices
+- File Size: <100MB per model
+- Load Time: Target <5 seconds
+- Animation: Include keyframe animations
+- Textures: Compressed and optimized
+
+3D Model Requirements:
+- Polygons: <50,000 for mobile compatibility
+- Textures: 1024x1024 or 2048x2048 maximum
+- Materials: PBR materials with normal maps
+- Animations: 30fps keyframe animations
+- LOD: Multiple detail levels if possible
+
+Place your 3D model files here and they will be automatically served by the backend server.
+
+For more details, see README.md in this directory.
+
+Note: The system includes CSS-based fallbacks if 3D models fail to load, ensuring AR functionality even without 3D assets.

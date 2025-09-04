@@ -23,9 +23,9 @@ export const SponsorGrid: React.FC = () => {
 
 
 
-  // Grid layout configuration - Main sponsor as ONE large prominent card spanning 4 slots
+  // Grid layout configuration - Layer 4: 24 individual slots (6x4 grid)
   const gridLayout: GridSlot[] = [
-    // Row 1: Standard slots 1-6
+    // Row 1: Slots 1-6
     { slotNumber: 1, type: 'standard', row: 1, col: 1 },
     { slotNumber: 2, type: 'standard', row: 1, col: 2 },
     { slotNumber: 3, type: 'standard', row: 1, col: 3 },
@@ -33,27 +33,29 @@ export const SponsorGrid: React.FC = () => {
     { slotNumber: 5, type: 'standard', row: 1, col: 5 },
     { slotNumber: 6, type: 'standard', row: 1, col: 6 },
     
-    // Row 2: Standard slots 7-8 + Main Sponsor (2x2) + Standard slots 13-14
+    // Row 2: Slots 7-12 (slot 8 is featured spinning)
     { slotNumber: 7, type: 'standard', row: 2, col: 1 },
-    { slotNumber: 8, type: 'live-bidding', row: 2, col: 2 },
-    { slotNumber: 9, type: 'main-sponsor', row: 2, col: 3, colSpan: 2, rowSpan: 2 }, // ONE large card spanning 4 slots
-    { slotNumber: 13, type: 'standard', row: 2, col: 5 },
-    { slotNumber: 14, type: 'standard', row: 2, col: 6 },
+    { slotNumber: 8, type: 'live-bidding', row: 2, col: 2 },  // Featured spinning slot
+    { slotNumber: 9, type: 'standard', row: 2, col: 3 },
+    { slotNumber: 10, type: 'standard', row: 2, col: 4 },
+    { slotNumber: 11, type: 'standard', row: 2, col: 5 },
+    { slotNumber: 12, type: 'standard', row: 2, col: 6 },
     
-    // Row 3: Standard slots 15-16 + Main Sponsor continues (2x2) + Standard slots 17-18
-    { slotNumber: 15, type: 'standard', row: 3, col: 1 },
-    { slotNumber: 16, type: 'standard', row: 3, col: 2 },
-    // Main sponsor continues from row 2 (no new slot needed - spans rows 2-3, cols 3-4)
+    // Row 3: Slots 13-18
+    { slotNumber: 13, type: 'standard', row: 3, col: 1 },
+    { slotNumber: 14, type: 'standard', row: 3, col: 2 },
+    { slotNumber: 15, type: 'main-sponsor', row: 3, col: 3 }, // Center main sponsor (single slot)
+    { slotNumber: 16, type: 'standard', row: 3, col: 4 },
     { slotNumber: 17, type: 'standard', row: 3, col: 5 },
     { slotNumber: 18, type: 'standard', row: 3, col: 6 },
     
-    // Row 4: Standard slots 19-24
+    // Row 4: Slots 19-24 (slot 24 is featured spinning)
     { slotNumber: 19, type: 'standard', row: 4, col: 1 },
     { slotNumber: 20, type: 'standard', row: 4, col: 2 },
     { slotNumber: 21, type: 'standard', row: 4, col: 3 },
     { slotNumber: 22, type: 'standard', row: 4, col: 4 },
     { slotNumber: 23, type: 'standard', row: 4, col: 5 },
-    { slotNumber: 24, type: 'standard', row: 4, col: 6 }
+    { slotNumber: 24, type: 'live-bidding', row: 4, col: 6 }  // Featured spinning slot
   ];
 
   // Auto-rotation logic
@@ -159,14 +161,24 @@ export const SponsorGrid: React.FC = () => {
   };
 
   const getSlotPosition = (slot: GridSlot) => {
-    const baseClasses = `relative`;
-    
-    if (slot.colSpan && slot.rowSpan) {
-      return `${baseClasses} col-span-2 row-span-2`;
-    }
-    
-    return baseClasses;
+    return `relative`; // All slots are individual now
   };
+
+  // Verify we have exactly 24 slots
+  const verifySlotCount = () => {
+    const slotNumbers = gridLayout.map(slot => slot.slotNumber).sort((a, b) => a - b);
+    console.log('Layer 4 - Total slots:', gridLayout.length);
+    console.log('Slot numbers:', slotNumbers);
+    console.log('Featured spinning slots:', slotNumbers.filter(n => n === 8 || n === 24));
+    return gridLayout.length === 24 && slotNumbers.length === 24;
+  };
+
+  // Run verification on component mount
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      verifySlotCount();
+    }
+  }, []);
 
 
 

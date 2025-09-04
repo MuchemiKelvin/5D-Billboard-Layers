@@ -1,3 +1,12 @@
+/* Import spinning slot animations */
+@import './styles/spinning-animations.css';
+
+/* Import hologram effects */
+@import './styles/hologram-effects.css';
+
+/* Import AR effects */
+@import './styles/ar-effects.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -91,13 +100,36 @@
   .slider::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
-    width: 16px;
-    height: 16px;
+    width: 20px;
+    height: 20px;
     border-radius: 50%;
-    background: #3b82f6; /* blue-500 */
+    background: #3b82f6;
     cursor: pointer;
-    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.3);
-    transition: background 0.2s, box-shadow 0.2s;
+    border: 2px solid #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Cyan slider styling for hologram controls */
+  .slider-cyan::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #06b6d4;
+    cursor: pointer;
+    border: 2px solid #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .slider-cyan::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #06b6d4;
+    cursor: pointer;
+    border: 2px solid #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   }
 
   .slider::-webkit-slider-thumb:hover {

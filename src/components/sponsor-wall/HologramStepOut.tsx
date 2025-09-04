@@ -220,6 +220,48 @@ export const HologramStepOut: React.FC<HologramStepOutProps> = ({
               ease: "linear"
             }}
           />
+
+          {/* Hologram Control Buttons */}
+          <div className="absolute top-2 right-2 flex flex-col gap-2 opacity-0 hover:opacity-100 transition-opacity duration-300 pointer-events-auto">
+            <button
+              className="p-2 bg-cyan-500/30 hover:bg-cyan-500/50 rounded-lg border border-cyan-400/50 transition-all duration-200 hover:scale-110 backdrop-blur-sm"
+              title="Expand Hologram"
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggle();
+              }}
+            >
+              <svg className="w-4 h-4 text-cyan-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+              </svg>
+            </button>
+            
+            <button
+              className="p-2 bg-purple-500/30 hover:bg-purple-500/50 rounded-lg border border-purple-400/50 transition-all duration-200 hover:scale-110 backdrop-blur-sm"
+              title="3D Rotate"
+              onClick={(e) => {
+                e.stopPropagation();
+                console.log('Rotate hologram');
+              }}
+            >
+              <svg className="w-4 h-4 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+            </button>
+
+            <button
+              className="p-2 bg-green-500/30 hover:bg-green-500/50 rounded-lg border border-green-400/50 transition-all duration-200 hover:scale-110 backdrop-blur-sm"
+              title="Company Info"
+              onClick={(e) => {
+                e.stopPropagation();
+                console.log('Show company details');
+              }}
+            >
+              <svg className="w-4 h-4 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </button>
+          </div>
         </div>
 
         {/* 3D Shadow Effect */}

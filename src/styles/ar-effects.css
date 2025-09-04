@@ -1,0 +1,321 @@
+/* 🥽 Layer 3: AR Effects Styles */
+
+/* AR Layer Container */
+.ar-layer-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: linear-gradient(135deg, rgba(0, 255, 0, 0.05) 0%, rgba(0, 100, 0, 0.1) 100%);
+  border-radius: 8px;
+}
+
+/* AR Frame Effects */
+.ar-frame-corner {
+  position: absolute;
+  border-color: rgba(0, 255, 0, 0.7);
+  transition: all 0.3s ease;
+}
+
+.ar-frame-corner:hover {
+  border-color: rgba(0, 255, 0, 1);
+  transform: scale(1.2);
+}
+
+/* AR Status Indicators */
+.ar-status-active {
+  background: radial-gradient(circle, rgba(0, 255, 0, 0.8) 0%, rgba(0, 255, 0, 0.4) 70%, transparent 100%);
+  animation: ar-pulse 2s ease-in-out infinite;
+}
+
+.ar-status-inactive {
+  background: radial-gradient(circle, rgba(128, 128, 128, 0.6) 0%, rgba(128, 128, 128, 0.3) 70%, transparent 100%);
+}
+
+@keyframes ar-pulse {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+
+/* QR Code Styles */
+.qr-code-container {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+}
+
+.qr-code-display {
+  border: 3px solid #10b981;
+  border-radius: 8px;
+  padding: 16px;
+  background: white;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* NFC Trigger Styles */
+.nfc-trigger {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  border: 2px solid rgba(59, 130, 246, 0.5);
+  transition: all 0.3s ease;
+}
+
+.nfc-trigger:hover {
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+  border-color: rgba(59, 130, 246, 0.8);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+}
+
+.nfc-trigger:active {
+  transform: translateY(0);
+}
+
+/* AR Overlay Styles */
+.ar-overlay {
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 20, 0, 0.9) 100%);
+  backdrop-filter: blur(20px);
+  border: 2px solid rgba(0, 255, 0, 0.3);
+  border-radius: 16px;
+}
+
+.ar-overlay-content {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+/* AR Content Type Icons */
+.ar-mascot-icon {
+  animation: mascot-bounce 2s ease-in-out infinite;
+}
+
+.ar-product-icon {
+  animation: product-pulse 3s ease-in-out infinite;
+}
+
+.ar-interactive-icon {
+  animation: interactive-spin 4s linear infinite;
+}
+
+.ar-3d-model-icon {
+  animation: model-float 5s ease-in-out infinite;
+}
+
+@keyframes mascot-bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-10px); }
+  60% { transform: translateY(-5px); }
+}
+
+@keyframes product-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.1); opacity: 0.8; }
+}
+
+@keyframes interactive-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes model-float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(-5px) rotate(5deg); }
+  50% { transform: translateY(-10px) rotate(0deg); }
+  75% { transform: translateY(-5px) rotate(-5deg); }
+}
+
+/* Time Slot Indicators */
+.time-slot-morning {
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  color: #92400e;
+}
+
+.time-slot-afternoon {
+  background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+  color: #9a3412;
+}
+
+.time-slot-evening {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  color: #581c87;
+}
+
+.time-slot-night {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  color: #94a3b8;
+}
+
+/* AR Trigger Buttons */
+.ar-trigger-btn {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.ar-trigger-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.ar-trigger-btn:hover::before {
+  left: 100%;
+}
+
+.ar-trigger-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* AR Scan Lines */
+.ar-scan-line {
+  position: absolute;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #00ff00, transparent);
+  animation: scan-sweep 3s linear infinite;
+}
+
+@keyframes scan-sweep {
+  0% { top: 0; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+/* AR Loading States */
+.ar-loading {
+  background: conic-gradient(from 0deg, transparent, #00ff00, transparent);
+  animation: ar-loading-spin 2s linear infinite;
+}
+
+@keyframes ar-loading-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* AR Success/Error States */
+.ar-success {
+  background: radial-gradient(circle, rgba(0, 255, 0, 0.8) 0%, rgba(0, 255, 0, 0.4) 70%, transparent 100%);
+  animation: ar-success-pulse 1s ease-in-out;
+}
+
+.ar-error {
+  background: radial-gradient(circle, rgba(255, 0, 0, 0.8) 0%, rgba(255, 0, 0, 0.4) 70%, transparent 100%);
+  animation: ar-error-shake 0.5s ease-in-out;
+}
+
+@keyframes ar-success-pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+@keyframes ar-error-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+/* AR Development Info */
+.dev-ar-info {
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  letter-spacing: 0.5px;
+  border: 1px solid rgba(0, 255, 0, 0.3);
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(4px);
+}
+
+/* AR Responsive Design */
+@media (max-width: 768px) {
+  .ar-layer-container {
+    border-radius: 4px;
+  }
+  
+  .ar-frame-corner {
+    width: 12px;
+    height: 12px;
+  }
+  
+  .qr-code-display {
+    padding: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .ar-trigger-btn {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+  
+  .ar-overlay {
+    border-radius: 12px;
+  }
+}
+
+/* AR Performance Optimizations */
+.ar-layer-container {
+  will-change: transform, opacity;
+  contain: layout style paint;
+}
+
+.ar-overlay {
+  will-change: transform, opacity;
+  contain: layout style paint;
+}
+
+/* AR Accessibility */
+.ar-trigger-btn:focus {
+  outline: 2px solid #00ff00;
+  outline-offset: 2px;
+}
+
+.ar-overlay:focus-within {
+  outline: 2px solid #00ff00;
+  outline-offset: 4px;
+}
+
+/* AR High Contrast Mode */
+@media (prefers-contrast: high) {
+  .ar-frame-corner {
+    border-width: 3px;
+    border-color: #00ff00;
+  }
+  
+  .ar-overlay {
+    border-width: 3px;
+    border-color: #00ff00;
+  }
+}
+
+/* AR Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .ar-mascot-icon,
+  .ar-product-icon,
+  .ar-interactive-icon,
+  .ar-3d-model-icon {
+    animation: none;
+  }
+  
+  .ar-scan-line {
+    animation: none;
+  }
+  
+  .ar-loading {
+    animation: none;
+  }
+}
+
+/* AR Print Styles */
+@media print {
+  .ar-layer-container,
+  .ar-overlay,
+  .ar-trigger-btn {
+    display: none !important;
+  }
+}
+

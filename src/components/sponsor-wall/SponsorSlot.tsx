@@ -3,7 +3,12 @@ import { motion } from 'framer-motion';
 import { HologramEffect } from './HologramEffect';
 import { AROverlaySystem } from './AROverlaySystem';
 import { HologramStepOut } from './HologramStepOut';
+import { HologramLayer } from '../beamer/HologramLayer';
+import { ARLayer } from '../beamer/ARLayer';
+// Spinning slot layer removed (Layer 4 disabled)
+// import { SpinningSlotLayer } from './SpinningSlotLayer';
 import { dataService, type Company } from '../../data/dataService';
+import { useLayerContext } from '../../contexts/LayerContext';
 
 interface SlotData {
   currentBid?: number;
@@ -23,6 +28,7 @@ export const SponsorSlot: React.FC<SponsorSlotProps> = ({
   isActive, 
   className = '' 
 }) => {
+  const { openModal, selectSlot, toggleFavorite, shareSlot, favorites } = useLayerContext();
   const [company, setCompany] = useState<Company | null>(null);
   const [slotData, setSlotData] = useState<SlotData | null>(null);
   const [timeRemaining, setTimeRemaining] = useState(3); // 3 seconds per cycle
@@ -593,22 +599,22 @@ export const SponsorSlot: React.FC<SponsorSlotProps> = ({
 
   return (
     <motion.div
-      className={`${getSlotStyling()} ${className}`}
-      variants={slotVariants}
-      initial="initial"
-      animate={isActive && company ? "heartbeat" : "initial"}
-      whileHover="hover"
-      whileTap="tap"
-      style={{ 
-        willChange: 'transform',
-        transformStyle: 'preserve-3d',
-        perspective: '1000px'
-      }}
-      layout
-      onHoverStart={() => setShowNextCompanyPreview(true)}
-      onHoverEnd={() => setShowNextCompanyPreview(false)}
-      onClick={() => setIsExpanded(!isExpanded)}
-    >
+        className={`${getSlotStyling()} ${className}`}
+        variants={slotVariants}
+        initial="initial"
+        animate={isActive && company ? "heartbeat" : "initial"}
+        whileHover="hover"
+        whileTap="tap"
+        style={{ 
+          willChange: 'transform',
+          transformStyle: 'preserve-3d',
+          perspective: '1000px'
+        }}
+        layout
+        onHoverStart={() => setShowNextCompanyPreview(true)}
+        onHoverEnd={() => setShowNextCompanyPreview(false)}
+        onClick={() => setIsExpanded(!isExpanded)}
+      >
       {/* Heartbeat Animation Overlay */}
       {isActive && company && (
         <motion.div
@@ -691,16 +697,74 @@ export const SponsorSlot: React.FC<SponsorSlotProps> = ({
         )}
       </div>
 
-      {/* QR Code - Top Right */}
-      <div className="absolute top-2 right-2">
-        <svg 
-          className="w-8 h-8 text-white drop-shadow-lg" 
-          fill="currentColor" 
-          viewBox="0 0 24 24"
+      {/* Control Buttons - Top Right */}
+      <div className="absolute top-2 right-2 flex gap-1">
+        {/* QR Code Button */}
+        <button
+          className="p-1.5 bg-blue-500/20 hover:bg-blue-500/40 rounded-lg border border-blue-400/30 transition-all duration-200 hover:scale-110"
+          title="QR Code"
+          onClick={(e) => {
+            e.stopPropagation();
+            selectSlot(slotNumber, company);
+            openModal('qr-code', { slotNumber, slotType, company });
+          }}
         >
-          <path d="M3 3h6v6H3V3zm2 2v2h2V5H5zm8-2h6v6h-6V3zm2 2v2h2V5h-2zM3 11h6v6H3v-6zm2 2v2h2v-2H5zm8 2h6v6h-6v-6zm2 2v2h2v-2h-2z"/>
-          <path d="M7 7h2v2H7V7zm8 0h2v2h-2V7z"/>
-        </svg>
+          <svg className="w-4 h-4 text-blue-300" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M3 3h6v6H3V3zm2 2v2h2V5H5zm8-2h6v6h-6V3zm2 2v2h2V5h-2zM3 11h6v6H3v-6zm2 2v2h2v-2H5zm8 2h6v6h-6v-6zm2 2v2h2v-2h-2z"/>
+            <path d="M7 7h2v2H7V7zm8 0h2v2h-2V7z"/>
+          </svg>
+        </button>
+
+        {/* Settings Button */}
+        <button
+          className="p-1.5 bg-gray-500/20 hover:bg-gray-500/40 rounded-lg border border-gray-400/30 transition-all duration-200 hover:scale-110"
+          title="Slot Settings"
+          onClick={(e) => {
+            e.stopPropagation();
+            selectSlot(slotNumber, company);
+            openModal('slot-settings', { slotNumber, slotType, company });
+          }}
+        >
+          <svg className="w-4 h-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+        </button>
+
+        {/* Bid/Action Button (conditional) */}
+        {slotType === 'live-bidding' && (
+          <button
+            className="p-1.5 bg-green-500/20 hover:bg-green-500/40 rounded-lg border border-green-400/30 transition-all duration-200 hover:scale-110"
+            title="Place Bid"
+            onClick={(e) => {
+              e.stopPropagation();
+              selectSlot(slotNumber, company);
+              openModal('bid-panel', { slotNumber, slotType, company });
+            }}
+          >
+            <svg className="w-4 h-4 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </button>
+        )}
+
+        {/* Favorite Button */}
+        <button
+          className={`p-1.5 rounded-lg border transition-all duration-200 hover:scale-110 ${
+            favorites.has(slotNumber) 
+              ? 'bg-red-500/40 border-red-400/50' 
+              : 'bg-red-500/20 border-red-400/30'
+          }`}
+          title={favorites.has(slotNumber) ? "Remove from Favorites" : "Add to Favorites"}
+          onClick={(e) => {
+            e.stopPropagation();
+            toggleFavorite(slotNumber);
+          }}
+        >
+          <svg className="w-4 h-4 text-red-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+          </svg>
+        </button>
       </div>
 
       {/* Content Layer */}
@@ -715,6 +779,72 @@ export const SponsorSlot: React.FC<SponsorSlotProps> = ({
         <div className="absolute top-2 left-8 w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
       )}
 
+      {/* Bottom Action Buttons */}
+      <div className="absolute bottom-2 left-2 right-2 flex justify-between items-center opacity-0 hover:opacity-100 transition-opacity duration-300">
+        {/* Left Action Buttons */}
+        <div className="flex gap-1">
+          <button
+            className="p-1.5 bg-cyan-500/20 hover:bg-cyan-500/40 rounded border border-cyan-400/30 transition-all duration-200 hover:scale-110"
+            title="View Details"
+            onClick={(e) => {
+              e.stopPropagation();
+              selectSlot(slotNumber, company);
+              openModal('company-details', { slotNumber, company });
+            }}
+          >
+            <svg className="w-3 h-3 text-cyan-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+          </button>
+
+          <button
+            className="p-1.5 bg-purple-500/20 hover:bg-purple-500/40 rounded border border-purple-400/30 transition-all duration-200 hover:scale-110"
+            title="Share Slot"
+            onClick={(e) => {
+              e.stopPropagation();
+              shareSlot(slotNumber);
+            }}
+          >
+            <svg className="w-3 h-3 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Right Action Buttons */}
+        <div className="flex gap-1">
+          {slotType === 'live-bidding' && (
+            <button
+              className="p-1.5 bg-orange-500/20 hover:bg-orange-500/40 rounded border border-orange-400/30 transition-all duration-200 hover:scale-110"
+              title="Quick Bid"
+              onClick={(e) => {
+                e.stopPropagation();
+                openModal('bid-panel', { slotNumber, slotType, company, quickBid: true });
+              }}
+            >
+              <svg className="w-3 h-3 text-orange-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+              </svg>
+            </button>
+          )}
+
+          <button
+            className="p-1.5 bg-yellow-500/20 hover:bg-yellow-500/40 rounded border border-yellow-400/30 transition-all duration-200 hover:scale-110"
+            title="Analytics"
+            onClick={(e) => {
+              e.stopPropagation();
+              selectSlot(slotNumber, company);
+              openModal('analytics', { slotNumber, company });
+            }}
+          >
+            <svg className="w-3 h-3 text-yellow-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
              {/* Next Company Preview */}
        <NextCompanyPreview />
 
@@ -723,6 +853,20 @@ export const SponsorSlot: React.FC<SponsorSlotProps> = ({
 
       {/* Performance Metrics */}
       <PerformanceMetrics />
-    </motion.div>
+
+      {/* Layer 2: Hologram Effects - Maya's Design Templates */}
+      <HologramLayer
+        slotNumber={slotNumber}
+        isActive={isActive}
+        sponsorLogo={company?.logo}
+      />
+
+      {/* Layer 3: AR Effects - QR/NFC Triggered */}
+      <ARLayer
+        slotNumber={slotNumber}
+        isActive={isActive}
+        sponsorLogo={company?.logo}
+      />
+      </motion.div>
   );
 };

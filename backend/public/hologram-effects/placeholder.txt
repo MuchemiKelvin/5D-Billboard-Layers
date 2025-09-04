@@ -1,0 +1,22 @@
+🎬 Hologram Effects Video Files
+
+This directory should contain your MP4/WebM video files with alpha channels.
+
+Required Files:
+- hologram-alpha.mp4 (Main alpha channel video)
+- hologram-alpha.webm (WebM version)
+- glow-effect.mp4 (Glow pulse effect)
+- spin-effect.mp4 (Spinning energy rings)
+- light-sweep.mp4 (Light reflection sweep)
+- combined-effect.mp4 (Combined effects)
+
+Video Specifications:
+- Format: MP4/WebM with alpha channel
+- Resolution: 1920x1080 or higher
+- Frame Rate: 30fps or 60fps
+- Duration: 10-15 seconds per effect
+- Background: Transparent (alpha channel)
+
+Place your video files here and they will be automatically served by the backend server.
+
+For more details, see README.md in this directory.

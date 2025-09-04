@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { dataService, type Company } from '../../data/dataService';
+import { useLayerContext } from '../../contexts/LayerContext';
 
 interface AROverlayProps {
   slotNumber: number;
@@ -35,6 +36,7 @@ export const AROverlaySystem: React.FC<AROverlayProps> = ({
   company,
   className = ''
 }) => {
+  const { openModal, updateGlobalSettings } = useLayerContext();
   const [isExpanded, setIsExpanded] = useState(false);
   const [arElements, setArElements] = useState<{
     logo: boolean;
@@ -154,6 +156,36 @@ export const AROverlaySystem: React.FC<AROverlayProps> = ({
               }}
             />
           ))}
+
+          {/* AR Control Buttons */}
+          <div className="absolute -top-8 -right-8 flex gap-1 opacity-0 hover:opacity-100 transition-opacity duration-300 pointer-events-auto">
+            <button
+              className="p-1.5 bg-cyan-500/30 hover:bg-cyan-500/50 rounded border border-cyan-400/50 transition-all duration-200 hover:scale-110 backdrop-blur-sm"
+              title="AR Settings"
+              onClick={(e) => {
+                e.stopPropagation();
+                openModal('ar-settings', { slotNumber, company });
+              }}
+            >
+              <svg className="w-3 h-3 text-cyan-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4" />
+              </svg>
+            </button>
+
+            <button
+              className="p-1.5 bg-purple-500/30 hover:bg-purple-500/50 rounded border border-purple-400/50 transition-all duration-200 hover:scale-110 backdrop-blur-sm"
+              title="Toggle AR Mode"
+              onClick={(e) => {
+                e.stopPropagation();
+                updateGlobalSettings({ arMode: true });
+              }}
+            >
+              <svg className="w-3 h-3 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+            </button>
+          </div>
         </div>
       </motion.div>
     );
