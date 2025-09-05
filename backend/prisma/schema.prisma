@@ -1,0 +1,309 @@
+// BeamerShow 24-Slot System Database Schema
+// 5D Sponsor Wall - AR/AI/Hologram Backend
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+// ============================================================================
+// USER MANAGEMENT
+// ============================================================================
+
+model User {
+  id          String   @id @default(cuid())
+  email       String   @unique
+  username    String   @unique
+  password    String
+  role        UserRole @default(VIEWER)
+  companyId   String?
+  company     Company? @relation(fields: [companyId], references: [id])
+  permissions String   @default("[]") // JSON string array
+  isActive    Boolean  @default(true)
+  lastLogin   DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  bids        Bid[]
+  analytics   Analytics[]
+
+  @@map("users")
+}
+
+enum UserRole {
+  ADMIN
+  OPERATOR
+  SPONSOR
+  VIEWER
+}
+
+// ============================================================================
+// COMPANY MANAGEMENT
+// ============================================================================
+
+model Company {
+  id              String   @id @default(cuid())
+  name            String   @unique
+  category        String
+  subcategory     String
+  tier            CompanyTier @default(STANDARD)
+  logo            String?
+  website         String?
+  description     String?
+  industry        String
+  founded         Int?
+  headquarters    String?
+  employeeCount   String?
+  revenue         String?
+  auctionEligible Boolean  @default(true)
+  maxBidAmount    Float    @default(0)
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  users           User[]
+  slots           Slot[]
+  bids            Bid[]
+  analytics       Analytics[]
+  files           File[]
+
+  @@map("companies")
+}
+
+enum CompanyTier {
+  PREMIUM
+  STANDARD
+}
+
+// ============================================================================
+// SLOT MANAGEMENT
+// ============================================================================
+
+model Slot {
+  id              String     @id @default(cuid())
+  slotNumber      Int        @unique
+  slotType        SlotType   @default(STANDARD)
+  position        Json       // { row: number, col: number, colSpan?: number, rowSpan?: number }
+  currentSponsor  String?
+  company         Company?   @relation(fields: [currentSponsor], references: [id])
+  currentBid      Float      @default(0)
+  reservePrice    Float      @default(0)
+  timeRemaining   Int        @default(0)
+  status          SlotStatus @default(AVAILABLE)
+  totalBids       Int        @default(0)
+  lastBidTime     DateTime?
+  startTime       DateTime?
+  endTime         DateTime?
+  category        String?
+  description     String?
+  isActive        Boolean    @default(true)
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  // Relations
+  bids            Bid[]
+  analytics       Analytics[]
+  arContent       ARContent[]
+  hologramEffects HologramEffect[]
+  files           File[]
+
+  @@map("slots")
+}
+
+enum SlotType {
+  STANDARD
+  MAIN_SPONSOR
+  LIVE_BIDDING
+}
+
+enum SlotStatus {
+  AVAILABLE
+  OCCUPIED
+  RESERVED
+  AUCTION_ACTIVE
+}
+
+// ============================================================================
+// BIDDING SYSTEM
+// ============================================================================
+
+model Bid {
+  id          String    @id @default(cuid())
+  slotId      String
+  slot        Slot      @relation(fields: [slotId], references: [id])
+  companyId   String
+  company     Company   @relation(fields: [companyId], references: [id])
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  amount      Float
+  status      BidStatus @default(ACTIVE)
+  bidderInfo  Json?     // { name: string, email: string, phone?: string }
+  timestamp   DateTime  @default(now())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("bids")
+}
+
+enum BidStatus {
+  ACTIVE
+  OUTBID
+  WON
+  WITHDRAWN
+}
+
+// ============================================================================
+// ANALYTICS & TRACKING
+// ============================================================================
+
+model Analytics {
+  id                String        @id @default(cuid())
+  slotId            String?
+  slot              Slot?         @relation(fields: [slotId], references: [id])
+  companyId         String?
+  company           Company?      @relation(fields: [companyId], references: [id])
+  userId            String?
+  user              User?         @relation(fields: [userId], references: [id])
+  eventType         AnalyticsType
+  metadata          Json          // Additional event data
+  sessionId         String?
+  deviceInfo        Json?         // Device and browser info
+  timestamp         DateTime      @default(now())
+  createdAt         DateTime      @default(now())
+
+  @@map("analytics")
+}
+
+enum AnalyticsType {
+  QR_SCAN
+  NFC_TAP
+  CONTENT_VIEW
+  CONTENT_LIKE
+  BID_PLACEMENT
+  AUCTION_VIEW
+  SLOT_VIEW
+  HOVER_INTERACTION
+  CLICK_INTERACTION
+}
+
+// ============================================================================
+// AR & HOLOGRAM CONTENT
+// ============================================================================
+
+model ARContent {
+  id          String   @id @default(cuid())
+  slotId      String
+  slot        Slot     @relation(fields: [slotId], references: [id])
+  title       String
+  description String?
+  contentType ARType
+  contentData Json     // AR content configuration
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("ar_content")
+}
+
+enum ARType {
+  LOGO_HOLOGRAM
+  INFO_PANEL
+  PRODUCT_SHOWCASE
+  INTERACTIVE_3D
+}
+
+model HologramEffect {
+  id          String   @id @default(cuid())
+  slotId      String
+  slot        Slot     @relation(fields: [slotId], references: [id])
+  effectType  String
+  settings    Json     // Hologram effect configuration
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("hologram_effects")
+}
+
+// ============================================================================
+// DEVICE MANAGEMENT
+// ============================================================================
+
+model Device {
+  id          String      @id @default(cuid())
+  deviceId    String      @unique
+  deviceType  DeviceType
+  name        String
+  status      DeviceStatus @default(OFFLINE)
+  location    Json?       // GPS coordinates and location info
+  config      Json?       // Device-specific configuration
+  lastSeen    DateTime?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@map("devices")
+}
+
+enum DeviceType {
+  BEAMER
+  IPAD
+  BILLBOARD
+  MOBILE
+}
+
+enum DeviceStatus {
+  ONLINE
+  OFFLINE
+  MAINTENANCE
+  ERROR
+}
+
+// ============================================================================
+// SYSTEM CONFIGURATION
+// ============================================================================
+
+model SystemConfig {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  value       Json
+  description String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("system_config")
+}
+
+model File {
+  id           String    @id @default(cuid())
+  filename     String
+  originalName String
+  mimeType     String
+  size         Int
+  path         String
+  type         FileType
+  companyId    String?
+  slotId       String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  // Relations
+  company      Company?  @relation(fields: [companyId], references: [id])
+  slot         Slot?     @relation(fields: [slotId], references: [id])
+
+  @@map("files")
+}
+
+enum FileType {
+  SPONSOR_ASSET
+  SLOT_CONTENT
+  AR_CONTENT
+  HOLOGRAM_ASSET
+  SYSTEM_ASSET
+}
