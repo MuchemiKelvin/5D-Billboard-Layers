@@ -3,7 +3,7 @@ Write-Host "BeamerShow API Test Suite - FINAL" -ForegroundColor Cyan
 Write-Host "===================================" -ForegroundColor Cyan
 Write-Host ""
 
-$baseUrl = "http://localhost:3001"
+$baseUrl = "http://localhost:3002"
 $testResults = @{
     Total = 0
     Passed = 0
@@ -557,6 +557,237 @@ Test-ApiEndpoint -Name "Get Performance Metrics" -Method "GET" -Endpoint "/api/a
 
 # Test 15.8: Get performance metrics for 7 days
 Test-ApiEndpoint -Name "Get Performance Metrics (7 days)" -Method "GET" -Endpoint "/api/analytics/performance?period=7d"
+
+# ADVANCED ANALYTICS SYSTEM
+Write-Host ""
+Write-Host "16. ADVANCED ANALYTICS SYSTEM" -ForegroundColor Cyan
+Write-Host "=============================" -ForegroundColor Cyan
+
+# Test Advanced Analytics Overview
+Write-Host "Testing: Advanced Analytics Overview" -ForegroundColor Yellow
+Test-ApiEndpoint -Name "Advanced Analytics Overview" -Method "GET" -Endpoint "/api/advanced-analytics/overview?period=24h"
+
+# Test Real-time Performance Metrics
+Write-Host "Testing: Real-time Performance Metrics" -ForegroundColor Yellow
+Test-ApiEndpoint -Name "Real-time Performance Metrics" -Method "GET" -Endpoint "/api/advanced-analytics/performance?period=24h&includeDetails=true"
+
+# Test Viewer Engagement Analytics
+Write-Host "Testing: Viewer Engagement Analytics" -ForegroundColor Yellow
+Test-ApiEndpoint -Name "Viewer Engagement Analytics" -Method "GET" -Endpoint "/api/advanced-analytics/engagement?period=7d"
+
+# Test Conversion Tracking
+Write-Host "Testing: Conversion Tracking" -ForegroundColor Yellow
+Test-ApiEndpoint -Name "Conversion Tracking" -Method "GET" -Endpoint "/api/advanced-analytics/conversion?period=24h"
+
+# Test Real-time Dashboard
+Write-Host "Testing: Real-time Dashboard" -ForegroundColor Yellow
+Test-ApiEndpoint -Name "Real-time Dashboard" -Method "GET" -Endpoint "/api/advanced-analytics/dashboard"
+
+# ADVANCED AUCTION SYSTEM
+Write-Host ""
+Write-Host "17. ADVANCED AUCTION SYSTEM" -ForegroundColor Cyan
+Write-Host "===========================" -ForegroundColor Cyan
+
+# Test Create Auction Session
+Write-Host "Testing: Create Auction Session" -ForegroundColor Yellow
+$auctionSessionBody = @{
+    name = "Beamer Show Auction Session"
+    description = "Advanced auction session for Beamer Show demonstration"
+    startTime = (Get-Date).AddMinutes(5).ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+    endTime = (Get-Date).AddHours(2).ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+    autoExtend = $true
+    extendDuration = 300
+    maxExtensions = 3
+    reservePrice = 50000
+    bidIncrement = 5000
+    status = "SCHEDULED"
+} | ConvertTo-Json
+Test-ApiEndpoint -Name "Create Auction Session" -Method "POST" -Endpoint "/api/advanced-auction/sessions" -Body $auctionSessionBody
+
+# Test Get All Auction Sessions
+Write-Host "Testing: Get All Auction Sessions" -ForegroundColor Yellow
+Test-ApiEndpoint -Name "Get All Auction Sessions" -Method "GET" -Endpoint "/api/advanced-auction/sessions"
+
+# Test Get Active Auctions
+Write-Host "Testing: Get Active Auctions" -ForegroundColor Yellow
+Test-ApiEndpoint -Name "Get Active Auctions" -Method "GET" -Endpoint "/api/advanced-auction/active"
+
+# Test Get Auction Statistics
+Write-Host "Testing: Get Auction Statistics" -ForegroundColor Yellow
+Test-ApiEndpoint -Name "Get Auction Statistics" -Method "GET" -Endpoint "/api/advanced-auction/statistics?period=7d"
+
+# Test Get Auction Notifications
+Write-Host "Testing: Get Auction Notifications" -ForegroundColor Yellow
+Test-ApiEndpoint -Name "Get Auction Notifications" -Method "GET" -Endpoint "/api/advanced-auction/notifications"
+
+# ============================================================================
+# PERFORMANCE MONITORING SYSTEM
+# ============================================================================
+Write-Host ""
+Write-Host "18. PERFORMANCE MONITORING SYSTEM" -ForegroundColor Magenta
+Write-Host "=================================" -ForegroundColor Magenta
+
+# Test Get Performance Metrics
+Write-Host "Testing: Get Performance Metrics" -ForegroundColor Yellow
+Test-ApiEndpoint -Name "Get Performance Metrics" -Method "GET" -Endpoint "/api/performance-monitoring/metrics"
+
+# Test Create Performance Metric
+Write-Host "Testing: Create Performance Metric" -ForegroundColor Yellow
+$performanceMetricBody = @{
+    metricType = "CPU_USAGE"
+    value = 75.5
+    unit = "%"
+    deviceId = "DEV-001"
+    metadata = '{"timestamp": "' + (Get-Date -Format "yyyy-MM-ddTHH:mm:ss.fffZ") + '"}'
+} | ConvertTo-Json
+Test-ApiEndpoint -Name "Create Performance Metric" -Method "POST" -Endpoint "/api/performance-monitoring/metrics" -Body $performanceMetricBody
+
+# Test Get Performance Metrics Summary
+Write-Host "Testing: Get Performance Metrics Summary" -ForegroundColor Yellow
+Test-ApiEndpoint -Name "Get Performance Metrics Summary" -Method "GET" -Endpoint "/api/performance-monitoring/metrics/summary?period=24h"
+
+# Test Get System Health
+Write-Host "Testing: Get System Health" -ForegroundColor Yellow
+Test-ApiEndpoint -Name "Get System Health" -Method "GET" -Endpoint "/api/performance-monitoring/health"
+
+# Test Update System Health
+Write-Host "Testing: Update System Health" -ForegroundColor Yellow
+$systemHealthBody = @{
+    status = "HEALTHY"
+    overallScore = 95.0
+    cpuUsage = 45.2
+    memoryUsage = 67.8
+    diskUsage = 23.1
+    networkLatency = 12.5
+    activeDevices = 3
+    totalDevices = 32
+    errorCount = 0
+    warningCount = 2
+} | ConvertTo-Json
+Test-ApiEndpoint -Name "Update System Health" -Method "POST" -Endpoint "/api/performance-monitoring/health" -Body $systemHealthBody
+
+# Test Get Performance Alerts
+Write-Host "Testing: Get Performance Alerts" -ForegroundColor Yellow
+Test-ApiEndpoint -Name "Get Performance Alerts" -Method "GET" -Endpoint "/api/performance-monitoring/alerts"
+
+# Test Create Performance Alert
+Write-Host "Testing: Create Performance Alert" -ForegroundColor Yellow
+$alertBody = @{
+    alertType = "THRESHOLD_EXCEEDED"
+    severity = "WARNING"
+    title = "High CPU Usage Detected"
+    message = "CPU usage has exceeded 80% threshold"
+    metricType = "CPU_USAGE"
+    threshold = 80.0
+    currentValue = 85.5
+    deviceId = "DEV-001"
+} | ConvertTo-Json
+Test-ApiEndpoint -Name "Create Performance Alert" -Method "POST" -Endpoint "/api/performance-monitoring/alerts" -Body $alertBody
+
+# Test Get Resource Usage
+Write-Host "Testing: Get Resource Usage" -ForegroundColor Yellow
+Test-ApiEndpoint -Name "Get Resource Usage" -Method "GET" -Endpoint "/api/performance-monitoring/resources"
+
+# Test Create Resource Usage Record
+Write-Host "Testing: Create Resource Usage Record" -ForegroundColor Yellow
+$resourceBody = @{
+    deviceId = "DEV-001"
+    resourceType = "MEMORY"
+    usage = 2048.5
+    capacity = 4096.0
+    unit = "MB"
+} | ConvertTo-Json
+Test-ApiEndpoint -Name "Create Resource Usage Record" -Method "POST" -Endpoint "/api/performance-monitoring/resources" -Body $resourceBody
+
+# Test Get Performance Dashboard
+Write-Host "Testing: Get Performance Dashboard" -ForegroundColor Yellow
+Test-ApiEndpoint -Name "Get Performance Dashboard" -Method "GET" -Endpoint "/api/performance-monitoring/dashboard?period=24h"
+
+# ============================================================================
+# ADVANCED VISUAL EFFECTS SYSTEM
+# ============================================================================
+Write-Host ""
+Write-Host "19. ADVANCED VISUAL EFFECTS SYSTEM" -ForegroundColor Magenta
+Write-Host "===================================" -ForegroundColor Magenta
+
+# Test Get Visual Effects
+Write-Host "Testing: Get Visual Effects" -ForegroundColor Yellow
+Test-ApiEndpoint -Name "Get Visual Effects" -Method "GET" -Endpoint "/api/visual-effects/effects"
+
+# Test Create Visual Effect
+Write-Host "Testing: Create Visual Effect" -ForegroundColor Yellow
+$visualEffectBody = @{
+    name = "Premium Hologram Effect"
+    type = "HOLOGRAM"
+    description = "Advanced holographic display effect for premium sponsors"
+    config = @{
+        intensity = 0.8
+        color = "#00ff88"
+        animation = "pulse"
+        duration = 5000
+        particles = 100
+    }
+    isActive = $true
+    isDefault = $false
+} | ConvertTo-Json -Depth 3
+Test-ApiEndpoint -Name "Create Visual Effect" -Method "POST" -Endpoint "/api/visual-effects/effects" -Body $visualEffectBody
+
+# Test Get Hologram Configurations
+Write-Host "Testing: Get Hologram Configurations" -ForegroundColor Yellow
+Test-ApiEndpoint -Name "Get Hologram Configurations" -Method "GET" -Endpoint "/api/visual-effects/holograms"
+
+# Test Get Animation Presets
+Write-Host "Testing: Get Animation Presets" -ForegroundColor Yellow
+Test-ApiEndpoint -Name "Get Animation Presets" -Method "GET" -Endpoint "/api/visual-effects/animations"
+
+# Test Get Effect Templates
+Write-Host "Testing: Get Effect Templates" -ForegroundColor Yellow
+Test-ApiEndpoint -Name "Get Effect Templates" -Method "GET" -Endpoint "/api/visual-effects/templates"
+
+# Test Create Effect Template
+Write-Host "Testing: Create Effect Template" -ForegroundColor Yellow
+$templateBody = @{
+    name = "Beamer Show Template"
+    category = "SPONSOR_DISPLAY"
+    description = "Template for Beamer Show sponsor displays"
+    template = @{
+        effects = @(
+            @{
+                type = "HOLOGRAM"
+                config = @{
+                    intensity = 0.9
+                    color = "#ff6600"
+                    animation = "rotate"
+                }
+            }
+        )
+        duration = 10000
+        transitions = @("fadeIn", "fadeOut")
+    }
+    isPublic = $true
+} | ConvertTo-Json -Depth 4
+Test-ApiEndpoint -Name "Create Effect Template" -Method "POST" -Endpoint "/api/visual-effects/templates" -Body $templateBody
+
+# Test Get Effect Performance Data
+Write-Host "Testing: Get Effect Performance Data" -ForegroundColor Yellow
+Test-ApiEndpoint -Name "Get Effect Performance Data" -Method "GET" -Endpoint "/api/visual-effects/performance"
+
+# Test Record Effect Performance
+Write-Host "Testing: Record Effect Performance" -ForegroundColor Yellow
+$performanceBody = @{
+    effectId = "effect-001"
+    slotId = "SLOT-001"
+    deviceId = "DEV-001"
+    renderTime = 16.7
+    frameRate = 60.0
+    memoryUsage = 128.5
+    cpuUsage = 25.3
+} | ConvertTo-Json
+Test-ApiEndpoint -Name "Record Effect Performance" -Method "POST" -Endpoint "/api/visual-effects/performance" -Body $performanceBody
+
+# Test Get Visual Effects Dashboard
+Write-Host "Testing: Get Visual Effects Dashboard" -ForegroundColor Yellow
+Test-ApiEndpoint -Name "Get Visual Effects Dashboard" -Method "GET" -Endpoint "/api/visual-effects/dashboard?period=24h"
 
 # Test Results Summary
 Write-Host ""

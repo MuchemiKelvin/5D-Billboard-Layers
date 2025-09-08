@@ -10,21 +10,35 @@ import { Server as SocketIOServer } from 'socket.io';
 // Load environment variables
 dotenv.config();
 
+// Configure BigInt serialization for JSON responses
+(BigInt.prototype as any).toJSON = function() {
+  return Number(this);
+};
+
 // Import routes and middleware
 import apiRoutes from './routes/api';
 import slotRoutes from './routes/slots';
 import companyRoutes from './routes/companies';
-// import sponsorRoutes from './routes/sponsors';
-// import syncRoutes from './routes/sync';
-// import analyticsRoutes from './routes/analytics';
 import authRoutes from './routes/auth';
-// import blockRoutes from './routes/blocks';
-// import arRoutes from './routes/ar';
 import biddingRoutes from './routes/bidding';
 import uploadRoutes from './routes/uploads';
 import arContentRoutes from './routes/ar-content';
 import deviceRoutes from './routes/devices';
 import analyticsRoutes from './routes/analytics';
+import syncRoutes from './routes/sync';
+import schedulingRoutes from './routes/scheduling';
+import interactiveRoutes from './routes/interactive';
+import systemConfigRoutes from './routes/system-config';
+import advancedAnalyticsRoutes from './routes/advanced-analytics';
+import advancedAuctionRoutes from './routes/advanced-auction';
+import performanceMonitoringRoutes from './routes/performance-monitoring';
+import visualEffectsRoutes from './routes/visual-effects';
+import beamerRoutes from './routes/beamer-simple';
+import ipadRoutes from './routes/ipad-simple';
+import sponsorsRoutes from './routes/sponsors-simple';
+import blocksRoutes from './routes/blocks-simple';
+import arRoutes from './routes/ar-simple';
+import syncDeviceRoutes from './routes/sync-device-simple';
 import { connectDatabase } from './lib/database';
 import { setupSocketHandlers } from './socket/handlers';
 import { logger } from './utils/logger';
@@ -109,19 +123,26 @@ app.get('/health', async (req, res) => {
 app.use('/api', apiRoutes);
 app.use('/api/slots', slotRoutes);
 app.use('/api/companies', companyRoutes);
-// app.use('/api/sponsors', sponsorRoutes); // Temporarily disabled due to route configuration issues
-// app.use('/api/sync', syncRoutes);
-// app.use('/api/analytics', analyticsRoutes);
 app.use('/api/auth', authRoutes);
-// app.use('/api/blocks', blockRoutes);
-// app.use('/api/ar', arRoutes);
 app.use('/api/bidding', biddingRoutes);
 app.use('/api/uploads', uploadRoutes);
 app.use('/api/ar-content', arContentRoutes);
 app.use('/api/devices', deviceRoutes);
 app.use('/api/analytics', analyticsRoutes);
-// app.use('/api/beamer', require('./routes/beamer'));
-// app.use('/api/ipad', require('./routes/ipad'));
+app.use('/api/sync', syncRoutes);
+app.use('/api/scheduling', schedulingRoutes);
+app.use('/api/interactive', interactiveRoutes);
+app.use('/api/system-config', systemConfigRoutes);
+app.use('/api/advanced-analytics', advancedAnalyticsRoutes);
+app.use('/api/advanced-auction', advancedAuctionRoutes);
+app.use('/api/performance-monitoring', performanceMonitoringRoutes);
+app.use('/api/visual-effects', visualEffectsRoutes);
+app.use('/api/beamer', beamerRoutes);
+app.use('/api/ipad', ipadRoutes);
+app.use('/api/sponsors', sponsorsRoutes);
+app.use('/api/blocks', blocksRoutes);
+app.use('/api/ar', arRoutes);
+app.use('/api/sync', syncDeviceRoutes);
 
 // API Tester endpoint
 app.get('/api-tester', (req, res) => {

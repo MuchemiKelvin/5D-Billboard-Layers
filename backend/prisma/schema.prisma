@@ -31,6 +31,9 @@ model User {
   // Relations
   bids        Bid[]
   analytics   Analytics[]
+  hiddenContentInteractions HiddenContentInteraction[]
+  qrCodeScans QRCodeScan[]
+  nfcTaps     NFCTap[]
 
   @@map("users")
 }
@@ -72,6 +75,8 @@ model Company {
   bids            Bid[]
   analytics       Analytics[]
   files           File[]
+  auctionSlots    AuctionSlot[]
+  hologramConfigs HologramConfig[]
 
   @@map("companies")
 }
@@ -112,6 +117,15 @@ model Slot {
   arContent       ARContent[]
   hologramEffects HologramEffect[]
   files           File[]
+  hiddenContent   HiddenContent[]
+  qrCodes         QRCode[]
+  nfcTags         NFCTag[]
+  auctionSlots    AuctionSlot[]
+  performanceMetrics PerformanceMetric[]
+  performanceAlerts PerformanceAlert[]
+  hologramConfigs HologramConfig[]
+  slotVisualEffects SlotVisualEffect[]
+  effectPerformance EffectPerformance[]
 
   @@map("slots")
 }
@@ -134,19 +148,21 @@ enum SlotStatus {
 // ============================================================================
 
 model Bid {
-  id          String    @id @default(cuid())
-  slotId      String
-  slot        Slot      @relation(fields: [slotId], references: [id])
-  companyId   String
-  company     Company   @relation(fields: [companyId], references: [id])
-  userId      String
-  user        User      @relation(fields: [userId], references: [id])
-  amount      Float
-  status      BidStatus @default(ACTIVE)
-  bidderInfo  Json?     // { name: string, email: string, phone?: string }
-  timestamp   DateTime  @default(now())
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id              String    @id @default(cuid())
+  slotId          String
+  slot            Slot      @relation(fields: [slotId], references: [id])
+  companyId       String
+  company         Company   @relation(fields: [companyId], references: [id])
+  userId          String
+  user            User      @relation(fields: [userId], references: [id])
+  amount          Float
+  status          BidStatus @default(ACTIVE)
+  bidderInfo      Json?     // { name: string, email: string, phone?: string }
+  auctionSessionId String?
+  auctionSession  AuctionSession? @relation(fields: [auctionSessionId], references: [id])
+  timestamp       DateTime  @default(now())
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 
   @@map("bids")
 }
@@ -247,6 +263,14 @@ model Device {
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 
+  // Relations
+  syncSessions SyncSession[]
+  deviceState  DeviceState?
+  performanceMetrics PerformanceMetric[]
+  performanceAlerts PerformanceAlert[]
+  resourceUsage ResourceUsage[]
+  effectPerformance EffectPerformance[]
+
   @@map("devices")
 }
 
@@ -267,18 +291,6 @@ enum DeviceStatus {
 // ============================================================================
 // SYSTEM CONFIGURATION
 // ============================================================================
-
-model SystemConfig {
-  id          String   @id @default(cuid())
-  key         String   @unique
-  value       Json
-  description String?
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  @@map("system_config")
-}
 
 model File {
   id           String    @id @default(cuid())
@@ -306,4 +318,641 @@ enum FileType {
   AR_CONTENT
   HOLOGRAM_ASSET
   SYSTEM_ASSET
+}
+
+// ============================================================================
+// MULTI-DEVICE SYNC SYSTEM
+// ============================================================================
+
+model SyncSession {
+  id          String   @id @default(cuid())
+  syncId      String   @unique
+  deviceId    String
+  device      Device   @relation(fields: [deviceId], references: [id])
+  status      SyncStatus @default(PENDING)
+  priority    SyncPriority @default(MEDIUM)
+  data        Json     // Sync data payload
+  checksum    String   // Data integrity check
+  compression Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  completedAt DateTime?
+
+  // Relations
+  events      SyncEvent[]
+
+  @@map("sync_sessions")
+}
+
+model SyncEvent {
+  id          String   @id @default(cuid())
+  syncId      String
+  syncSession SyncSession @relation(fields: [syncId], references: [id])
+  eventType   SyncEventType
+  deviceId    String
+  data        Json?
+  timestamp   DateTime @default(now())
+  success     Boolean  @default(true)
+  error       String?
+
+  @@map("sync_events")
+}
+
+model DeviceState {
+  id          String   @id @default(cuid())
+  deviceId    String   @unique
+  device      Device   @relation(fields: [deviceId], references: [id])
+  state       Json     // Current device state
+  lastSync    DateTime @default(now())
+  version     Int      @default(1)
+  checksum    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("device_states")
+}
+
+enum SyncStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum SyncPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum SyncEventType {
+  CONNECT
+  DISCONNECT
+  SYNC_START
+  SYNC_COMPLETE
+  SYNC_ERROR
+  STATE_UPDATE
+  CONFLICT_DETECTED
+  CONFLICT_RESOLVED
+}
+
+// ============================================================================
+// ADVANCED SCHEDULING SYSTEM
+// ============================================================================
+
+model Schedule {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  type        ScheduleType
+  status      ScheduleStatus @default(ACTIVE)
+  startTime   DateTime
+  endTime     DateTime?
+  recurrence  Json?    // Recurrence pattern
+  config      Json     // Schedule configuration
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  blocks      ScheduleBlock[]
+
+  @@map("schedules")
+}
+
+model ScheduleBlock {
+  id         String   @id @default(cuid())
+  scheduleId String
+  schedule   Schedule @relation(fields: [scheduleId], references: [id])
+  name       String
+  startTime  DateTime
+  endTime    DateTime
+  slots      Json     // Slot configuration for this block
+  order      Int      @default(0)
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("schedule_blocks")
+}
+
+enum ScheduleType {
+  ROTATION
+  MAINTENANCE
+  SPECIAL_EVENT
+  AUCTION
+  CUSTOM
+}
+
+enum ScheduleStatus {
+  ACTIVE
+  PAUSED
+  COMPLETED
+  CANCELLED
+}
+
+// ============================================================================
+// INTERACTIVE CONTENT SYSTEM
+// ============================================================================
+
+model HiddenContent {
+  id          String   @id @default(cuid())
+  slotId      String
+  slot        Slot     @relation(fields: [slotId], references: [id])
+  type        ContentType
+  title       String
+  description String
+  value       String
+  isUnlocked  Boolean  @default(false)
+  unlockRequirement String
+  expiresAt   DateTime?
+  views       Int      @default(0)
+  likes       Int      @default(0)
+  shares      Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  interactions HiddenContentInteraction[]
+
+  @@map("hidden_content")
+}
+
+model HiddenContentInteraction {
+  id          String   @id @default(cuid())
+  contentId   String
+  content     HiddenContent @relation(fields: [contentId], references: [id])
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id])
+  interactionType InteractionType
+  metadata    Json?
+  timestamp   DateTime @default(now())
+
+  @@map("hidden_content_interactions")
+}
+
+model QRCode {
+  id          String   @id @default(cuid())
+  slotId      String
+  slot        Slot     @relation(fields: [slotId], references: [id])
+  uniqueId    String   @unique
+  data        Json     // QR code data
+  scanCount   Int      @default(0)
+  lastScanTime DateTime?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  scans       QRCodeScan[]
+
+  @@map("qr_codes")
+}
+
+model QRCodeScan {
+  id          String   @id @default(cuid())
+  qrCodeId    String
+  qrCode      QRCode   @relation(fields: [qrCodeId], references: [id])
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id])
+  deviceInfo  Json?
+  location    Json?
+  timestamp   DateTime @default(now())
+
+  @@map("qr_code_scans")
+}
+
+model NFCTag {
+  id          String   @id @default(cuid())
+  slotId      String
+  slot        Slot     @relation(fields: [slotId], references: [id])
+  tagId       String   @unique
+  data        Json     // NFC tag data
+  interactions Int     @default(0)
+  lastInteractionTime DateTime?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  taps        NFCTap[]
+
+  @@map("nfc_tags")
+}
+
+model NFCTap {
+  id          String   @id @default(cuid())
+  nfcTagId    String
+  nfcTag      NFCTag   @relation(fields: [nfcTagId], references: [id])
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id])
+  deviceInfo  Json?
+  location    Json?
+  timestamp   DateTime @default(now())
+
+  @@map("nfc_taps")
+}
+
+enum ContentType {
+  OFFER
+  HIDDEN_CONTENT
+  BID_PARTICIPATION
+  SPECIAL_DEAL
+  PROMOTION
+}
+
+enum InteractionType {
+  VIEW
+  LIKE
+  SHARE
+  UNLOCK
+  SCAN
+  TAP
+}
+
+// ============================================================================
+// SYSTEM CONFIGURATION
+// ============================================================================
+
+model SystemConfig {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  value       Json
+  description String?
+  category    String   @default("general")
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("system_config")
+}
+
+// ============================================================================
+// ADVANCED AUCTION SYSTEM
+// ============================================================================
+
+model AuctionSession {
+  id              String   @id @default(cuid())
+  name            String
+  description     String?
+  startTime       DateTime
+  endTime         DateTime
+  actualStartTime DateTime?
+  actualEndTime   DateTime?
+  autoExtend      Boolean  @default(false)
+  extendDuration  Int      @default(300) // 5 minutes in seconds
+  maxExtensions   Int      @default(3)
+  extensions      Int      @default(0)
+  reservePrice    Float?
+  bidIncrement    Float    @default(1000)
+  status          AuctionStatus @default(SCHEDULED)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  slots           AuctionSlot[]
+  bids            Bid[]
+  notifications   AuctionNotification[]
+
+  @@map("auction_sessions")
+}
+
+model AuctionSlot {
+  id              String   @id @default(cuid())
+  auctionSessionId String
+  slotId          String
+  companyId       String?
+  reservePrice    Float?
+  status          AuctionSlotStatus @default(AVAILABLE)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  auctionSession  AuctionSession @relation(fields: [auctionSessionId], references: [id], onDelete: Cascade)
+  slot            Slot @relation(fields: [slotId], references: [id])
+  company         Company? @relation(fields: [companyId], references: [id])
+
+  @@unique([auctionSessionId, slotId])
+  @@map("auction_slots")
+}
+
+model AuctionNotification {
+  id              String   @id @default(cuid())
+  auctionSessionId String
+  type            AuctionNotificationType
+  recipientType   NotificationRecipientType
+  recipientId     String?
+  message         String
+  priority        NotificationPriority @default(MEDIUM)
+  isRead          Boolean  @default(false)
+  createdAt       DateTime @default(now())
+
+  // Relations
+  auctionSession  AuctionSession @relation(fields: [auctionSessionId], references: [id], onDelete: Cascade)
+
+  @@map("auction_notifications")
+}
+
+enum AuctionStatus {
+  SCHEDULED
+  ACTIVE
+  PAUSED
+  COMPLETED
+  CANCELLED
+}
+
+enum AuctionSlotStatus {
+  AVAILABLE
+  RESERVED
+  SOLD
+  CANCELLED
+}
+
+enum AuctionNotificationType {
+  BID_PLACED
+  BID_OUTBID
+  AUCTION_STARTING
+  AUCTION_ENDING
+  AUCTION_EXTENDED
+  AUCTION_COMPLETED
+}
+
+enum NotificationRecipientType {
+  ALL
+  BIDDERS
+  COMPANY
+  USER
+}
+
+enum NotificationPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+// ============================================================================
+// PERFORMANCE MONITORING SYSTEM
+// ============================================================================
+
+model PerformanceMetric {
+  id          String   @id @default(cuid())
+  metricType  PerformanceMetricType
+  value       Float
+  unit        String?
+  deviceId    String?
+  slotId      String?
+  metadata    String?  // JSON string for additional data
+  timestamp   DateTime @default(now())
+  createdAt   DateTime @default(now())
+
+  // Relations
+  device      Device?  @relation(fields: [deviceId], references: [id])
+  slot        Slot?    @relation(fields: [slotId], references: [id])
+
+  @@map("performance_metrics")
+}
+
+model SystemHealth {
+  id              String   @id @default(cuid())
+  status          HealthStatus
+  overallScore    Float    // 0-100 health score
+  cpuUsage        Float?
+  memoryUsage     Float?
+  diskUsage       Float?
+  networkLatency  Float?
+  activeDevices   Int      @default(0)
+  totalDevices    Int      @default(0)
+  errorCount      Int      @default(0)
+  warningCount    Int      @default(0)
+  lastCheck       DateTime @default(now())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("system_health")
+}
+
+model PerformanceAlert {
+  id          String   @id @default(cuid())
+  alertType   AlertType
+  severity    AlertSeverity
+  title       String
+  message     String
+  metricType  PerformanceMetricType?
+  threshold   Float?
+  currentValue Float?
+  deviceId    String?
+  slotId      String?
+  isResolved  Boolean  @default(false)
+  resolvedAt  DateTime?
+  resolvedBy  String?
+  metadata    String?  // JSON string for additional data
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  device      Device?  @relation(fields: [deviceId], references: [id])
+  slot        Slot?    @relation(fields: [slotId], references: [id])
+
+  @@map("performance_alerts")
+}
+
+model ResourceUsage {
+  id          String   @id @default(cuid())
+  deviceId    String?
+  resourceType ResourceType
+  usage       Float    // Percentage or absolute value
+  capacity    Float?   // Total capacity if applicable
+  unit        String?  // MB, GB, %, etc.
+  timestamp   DateTime @default(now())
+  createdAt   DateTime @default(now())
+
+  // Relations
+  device      Device?  @relation(fields: [deviceId], references: [id])
+
+  @@map("resource_usage")
+}
+
+enum PerformanceMetricType {
+  CPU_USAGE
+  MEMORY_USAGE
+  DISK_USAGE
+  NETWORK_LATENCY
+  RESPONSE_TIME
+  THROUGHPUT
+  ERROR_RATE
+  AVAILABILITY
+  SLOT_LOAD_TIME
+  DEVICE_TEMPERATURE
+  POWER_CONSUMPTION
+}
+
+enum HealthStatus {
+  HEALTHY
+  WARNING
+  CRITICAL
+  OFFLINE
+}
+
+enum AlertType {
+  THRESHOLD_EXCEEDED
+  DEVICE_OFFLINE
+  HIGH_ERROR_RATE
+  PERFORMANCE_DEGRADATION
+  RESOURCE_EXHAUSTION
+  SYSTEM_OVERLOAD
+  NETWORK_ISSUE
+  STORAGE_FULL
+}
+
+enum AlertSeverity {
+  INFO
+  WARNING
+  ERROR
+  CRITICAL
+}
+
+enum ResourceType {
+  CPU
+  MEMORY
+  DISK
+  NETWORK
+  STORAGE
+  POWER
+  TEMPERATURE
+}
+
+// ============================================================================
+// ADVANCED VISUAL EFFECTS SYSTEM
+// ============================================================================
+
+model VisualEffect {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  type        VisualEffectType
+  description String?
+  config      Json     // Effect configuration parameters
+  isActive    Boolean  @default(true)
+  isDefault   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  hologramConfigs HologramConfig[]
+  animationPresets AnimationPreset[]
+  slotEffects     SlotVisualEffect[]
+  effectPerformance EffectPerformance[]
+
+  @@map("visual_effects")
+}
+
+model HologramConfig {
+  id          String   @id @default(cuid())
+  effectId    String
+  slotId      String?
+  companyId   String?
+  name        String
+  config      Json     // Hologram-specific configuration
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  effect      VisualEffect @relation(fields: [effectId], references: [id], onDelete: Cascade)
+  slot        Slot?        @relation(fields: [slotId], references: [id])
+  company     Company?     @relation(fields: [companyId], references: [id])
+
+  @@map("hologram_configs")
+}
+
+model AnimationPreset {
+  id          String   @id @default(cuid())
+  effectId    String
+  name        String
+  description String?
+  config      Json     // Animation configuration
+  duration    Int      @default(5000) // Duration in milliseconds
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  effect      VisualEffect @relation(fields: [effectId], references: [id], onDelete: Cascade)
+
+  @@map("animation_presets")
+}
+
+model SlotVisualEffect {
+  id          String   @id @default(cuid())
+  slotId      String
+  effectId    String
+  isActive    Boolean  @default(true)
+  priority    Int      @default(1) // Higher number = higher priority
+  config      Json?    // Slot-specific effect overrides
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  slot        Slot         @relation(fields: [slotId], references: [id], onDelete: Cascade)
+  effect      VisualEffect @relation(fields: [effectId], references: [id], onDelete: Cascade)
+
+  @@unique([slotId, effectId])
+  @@map("slot_visual_effects")
+}
+
+model EffectTemplate {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  category    EffectCategory
+  description String?
+  template    Json     // Complete effect template
+  isPublic    Boolean  @default(false)
+  createdBy   String?  // User ID who created the template
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("effect_templates")
+}
+
+model EffectPerformance {
+  id          String   @id @default(cuid())
+  effectId    String
+  slotId      String?
+  deviceId    String?
+  renderTime  Float    // Time taken to render effect in ms
+  frameRate   Float    // Frames per second
+  memoryUsage Float    // Memory usage in MB
+  cpuUsage    Float    // CPU usage percentage
+  timestamp   DateTime @default(now())
+  createdAt   DateTime @default(now())
+
+  // Relations
+  effect      VisualEffect @relation(fields: [effectId], references: [id], onDelete: Cascade)
+  slot        Slot?        @relation(fields: [slotId], references: [id])
+  device      Device?      @relation(fields: [deviceId], references: [id])
+
+  @@map("effect_performance")
+}
+
+enum VisualEffectType {
+  HOLOGRAM
+  PARTICLE_SYSTEM
+  LIGHTING
+  ANIMATION
+  TRANSITION
+  OVERLAY
+  BACKGROUND
+  INTERACTION
+}
+
+enum EffectCategory {
+  SPONSOR_DISPLAY
+  AUCTION_EFFECTS
+  INTERACTIVE_ELEMENTS
+  BACKGROUND_AMBIENCE
+  TRANSITION_EFFECTS
+  SPECIAL_EVENTS
 }
