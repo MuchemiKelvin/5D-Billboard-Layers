@@ -1,63 +1,77 @@
-# BeamerShow 24-Slot System - API Documentation
+# 5D Sponsor Wall - Backend API Documentation
 
-## 🚀 Overview
+## 📋 Table of Contents
+1. [Overview](#overview)
+2. [Base URL & Authentication](#base-url--authentication)
+3. [Core APIs](#core-apis)
+4. [Advanced APIs](#advanced-apis)
+5. [Device Management APIs](#device-management-apis)
+6. [Analytics & Monitoring APIs](#analytics--monitoring-apis)
+7. [Error Handling](#error-handling)
+8. [Rate Limiting](#rate-limiting)
 
-The BeamerShow API provides comprehensive endpoints for managing a 24-slot rotating advertisement system with AR/AI/Hologram capabilities. This RESTful API supports real-time synchronization, content management, analytics, and live bidding.
+## 🌟 Overview
 
-**Base URL**: `http://localhost:5000/api`  
-**Version**: 2.0.0  
-**Authentication**: JWT Bearer Token  
-**Rate Limiting**: 100 requests per 15 minutes (general), 5 requests per 15 minutes (auth)
+The 5D Sponsor Wall Backend provides a comprehensive REST API for managing sponsor displays, bidding systems, device synchronization, and analytics. Built with Node.js, Express, TypeScript, and Prisma ORM.
 
-## 🔐 Authentication
+**Base URL**: `http://localhost:3002` (Development)
+**API Version**: v1
+**Content Type**: `application/json`
 
-### JWT Token Format
+## 🔐 Base URL & Authentication
+
+### Base URL
 ```
-Authorization: Bearer <your-jwt-token>
+http://localhost:3002/api
 ```
 
-### Token Expiration
-- **Access Token**: 24 hours (configurable)
-- **Refresh Token**: 7 days (configurable)
+### Authentication
+Most endpoints require authentication via JWT tokens:
+```http
+Authorization: Bearer <jwt_token>
+```
 
-## 📋 API Endpoints
+## 🏗️ Core APIs
 
-### 1. API Overview
-**GET** `/api` - Get complete API documentation and endpoint list
-
-**Response Example:**
+### 1. Health Check
+```http
+GET /health
+```
+**Response:**
 ```json
 {
-  "name": "BeamerShow 24-Slot System API",
-  "version": "2.0.0",
-  "description": "Complete API for managing 24-slot rotating advertisement system with AR/AI/Hologram capabilities",
-  "baseUrl": "/api",
-  "endpoints": { ... }
+  "status": "healthy",
+  "timestamp": "2025-09-08T14:45:58.331Z",
+  "uptime": 3600,
+  "version": "2.0.0"
 }
 ```
-
----
 
 ### 2. Authentication
 
-#### User Registration
-**POST** `/api/auth/register`
+#### Register User
+```http
+POST /api/auth/register
+```
+**Request Body:**
 ```json
 {
-  "username": "john_doe",
-  "email": "john@example.com",
-  "password": "securePassword123",
-  "company": "TechCorp",
-  "role": "operator"
+  "username": "sponsor_user",
+  "email": "user@example.com",
+  "password": "secure_password",
+  "role": "SPONSOR"
 }
 ```
 
-#### User Login
-**POST** `/api/auth/login`
+#### Login User
+```http
+POST /api/auth/login
+```
+**Request Body:**
 ```json
 {
-  "email": "john@example.com",
-  "password": "securePassword123"
+  "email": "user@example.com",
+  "password": "secure_password"
 }
 ```
 
@@ -65,658 +79,549 @@ Authorization: Bearer <your-jwt-token>
 ```json
 {
   "success": true,
+  "message": "Login successful",
   "data": {
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
     "user": {
-      "id": "user-123",
-      "username": "john_doe",
-      "email": "john@example.com",
-      "role": "operator"
-    }
+      "id": "USER-001",
+      "username": "sponsor_user",
+      "email": "user@example.com",
+      "role": "SPONSOR"
+    },
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
   }
 }
 ```
 
----
+### 3. Companies Management
 
-### 3. Slots Management
+#### Get All Companies
+```http
+GET /api/companies
+```
+
+#### Get Company by ID
+```http
+GET /api/companies/:id
+```
+
+#### Create Company
+```http
+POST /api/companies
+```
+**Request Body:**
+```json
+{
+  "name": "TechCorp Solutions",
+  "description": "Leading technology solutions provider",
+  "logo": "https://example.com/logo.png",
+  "website": "https://techcorp.com",
+  "contactEmail": "contact@techcorp.com",
+  "contactPhone": "+254700000000"
+}
+```
+
+### 4. Slots Management
 
 #### Get All Slots
-**GET** `/api/slots`
+```http
+GET /api/slots
+```
 
-**Query Parameters:**
-- `status` - Filter by slot status
-- `type` - Filter by slot type
-- `active` - Filter by active status
+#### Get Slot by ID
+```http
+GET /api/slots/:id
+```
 
-**Response:**
+#### Update Slot
+```http
+PUT /api/slots/:id
+```
+**Request Body:**
 ```json
 {
-  "success": true,
-  "data": [
-    {
-      "id": "slot-1",
-      "slotNumber": 1,
-      "slotType": "regular",
-      "status": "active",
-      "sponsor": {
-        "id": "sponsor-1",
-        "name": "TechCorp"
-      },
-      "layers": {
-        "layer-1-static": { "isActive": true, "content": "logo.png" },
-        "layer-2-hologram": { "isActive": false, "content": null },
-        "layer-3-ar": { "isActive": false, "content": null }
-      }
-    }
-  ]
+  "currentSponsor": "COMP-001",
+  "slotType": "PREMIUM",
+  "isActive": true
 }
 ```
 
-#### Create New Slot
-**POST** `/api/slots` *(Requires Authentication)*
+### 5. Bidding System
+
+#### Place Bid
+```http
+POST /api/bidding
+```
+**Request Body:**
 ```json
 {
-  "slotNumber": 25,
-  "slotType": "premium",
-  "sponsorId": "sponsor-1",
-  "layers": {
-    "layer-1-static": { "isActive": true, "content": "new-logo.png" }
+  "slotId": "SLOT-001",
+  "companyId": "COMP-001",
+  "userId": "USER-001",
+  "amount": 150000,
+  "bidderInfo": {
+    "contactPerson": "John Doe",
+    "phone": "+254700000000",
+    "notes": "Premium slot bid"
   }
 }
 ```
 
----
-
-### 4. Sponsor Management
-
-#### Get All Sponsors
-**GET** `/api/sponsors`
-
-**Query Parameters:**
-- `category` - Filter by sponsor category
-- `tier` - Filter by sponsor tier
-- `active` - Filter by active status
-
-#### Create New Sponsor
-**POST** `/api/sponsors` *(Requires Authentication)*
-```json
-{
-  "name": "NewBrand",
-  "company": "NewBrand Corp",
-  "category": "technology",
-  "tier": "premium",
-  "description": "Innovative tech solutions"
-}
+#### Get Bids for Slot
+```http
+GET /api/bidding/slot/:slotId
 ```
 
-#### Upload Sponsor Assets
-**POST** `/api/sponsors/:id/assets` *(Requires Authentication)*
-```multipart/form-data
-logo: [file],
-hologramVideo: [file],
-arModel: [file]
+#### Get User Bids
+```http
+GET /api/bidding/user/:userId
 ```
 
----
+## 🚀 Advanced APIs
 
-### 5. Block Management
+### 6. Multi-Device Sync System
 
-#### Get All Blocks
-**GET** `/api/blocks`
-
-**Query Parameters:**
-- `status` - Filter by block status
-- `active` - Filter by active status
-
-**Response:**
-```json
-{
-  "success": true,
-  "data": [
-    {
-      "id": "1",
-      "name": "Morning Block",
-      "startTime": "06:00",
-      "endTime": "10:00",
-      "duration": 4,
-      "isActive": true,
-      "currentSlotIndex": 0,
-      "totalSlots": 6,
-      "status": "active"
-    }
-  ]
-}
+#### Register Device
+```http
+POST /api/sync/device/register
 ```
-
-#### Create New Block
-**POST** `/api/blocks` *(Requires Authentication)*
+**Request Body:**
 ```json
 {
-  "name": "Night Block",
-  "startTime": "22:00",
-  "endTime": "02:00",
-  "duration": 4,
-  "autoRotate": true,
-  "rotationInterval": 30
-}
-```
-
-#### Activate Block
-**POST** `/api/blocks/:id/activate` *(Requires Authentication)*
-
-#### Rotate Slots in Block
-**POST** `/api/blocks/:id/rotate` *(Requires Authentication)*
-```json
-{
-  "direction": "next" // or "previous"
-}
-```
-
----
-
-### 6. AR Content Management
-
-#### Get All AR Content
-**GET** `/api/ar`
-
-**Query Parameters:**
-- `slotId` - Filter by slot ID
-- `triggerType` - Filter by trigger type (qr, nfc, manual)
-- `category` - Filter by content category
-- `active` - Filter by active status
-
-**Response:**
-```json
-{
-  "success": true,
-  "data": [
-    {
-      "id": "1",
-      "name": "Product Showcase AR",
-      "modelType": "gltf",
-      "modelUrl": "/uploads/ar-models/product-showcase.gltf",
-      "triggerType": "qr",
-      "triggerId": "qr-001",
-      "slotId": "15",
-      "isActive": true,
-      "settings": {
-        "scale": 1.0,
-        "animations": ["idle", "interact"],
-        "interactions": ["tap", "swipe", "rotate"]
-      }
-    }
-  ]
-}
-```
-
-#### Create AR Content
-**POST** `/api/ar` *(Requires Authentication)*
-```json
-{
-  "name": "New AR Experience",
-  "description": "Interactive 3D showcase",
-  "modelType": "glb",
-  "triggerType": "qr",
-  "slotId": "10",
-  "isActive": true,
-  "settings": {
-    "scale": 1.2,
-    "animations": ["intro", "loop"],
-    "interactions": ["gaze", "gesture"]
+  "deviceId": "BEAMER-001",
+  "deviceType": "BEAMER",
+  "name": "Main Projector Display",
+  "location": {
+    "lat": -1.2921,
+    "lng": 36.8219,
+    "address": "Nairobi, Kenya"
+  },
+  "capabilities": {
+    "resolution": "1920x1080",
+    "brightness": 80
   }
 }
 ```
 
-#### Activate AR Content
-**POST** `/api/ar/:id/activate`
+#### Sync Device State
+```http
+POST /api/sync/device/:deviceId/sync
+```
+**Request Body:**
 ```json
 {
-  "deviceId": "device-123",
-  "deviceType": "mobile",
-  "location": "main-hall"
+  "state": {
+    "currentSlot": "SLOT-001",
+    "rotationSpeed": 30,
+    "isActive": true
+  }
 }
 ```
 
-#### Process AR Scan/Trigger
-**POST** `/api/ar/scan`
-```json
-{
-  "triggerId": "qr-001",
-  "triggerType": "qr",
-  "deviceId": "device-123",
-  "deviceType": "mobile"
-}
+#### Broadcast to All Devices
+```http
+POST /api/sync/device/broadcast
 ```
-
----
-
-### 7. Live Bidding System
-
-#### Get All Active Bids
-**GET** `/api/bidding`
-
-**Query Parameters:**
-- `slotId` - Filter by slot ID
-- `status` - Filter by bid status
-- `type` - Filter by bid type
-
-**Response:**
-```json
-{
-  "success": true,
-  "data": [
-    {
-      "id": "1",
-      "slotId": "8",
-      "slotNumber": 8,
-      "sponsorName": "TechCorp",
-      "bidAmount": 1500.00,
-      "currency": "USD",
-      "bidStatus": "active",
-      "currentHighestBid": 1500.00,
-      "totalBids": 3,
-      "endTime": "2024-01-01T14:00:00Z"
-    }
-  ]
-}
-```
-
-#### Place New Bid
-**POST** `/api/bidding` *(Requires Authentication)*
-```json
-{
-  "slotId": "8",
-  "bidAmount": 1600.00,
-  "currency": "USD",
-  "bidType": "premium",
-  "autoExtend": true,
-  "extendThreshold": 5
-}
-```
-
-#### Get Active Bidding Sessions
-**GET** `/api/bidding/active`
-
-**Response includes time remaining and expiration warnings:**
-```json
-{
-  "success": true,
-  "data": [
-    {
-      "id": "1",
-      "timeRemaining": 1800000,
-      "timeRemainingFormatted": "30m 0s",
-      "isExpiringSoon": false
-    }
-  ]
-}
-```
-
-#### Get Bidding History
-**GET** `/api/bidding/history`
-
-**Query Parameters:**
-- `slotId` - Filter by slot ID
-- `sponsorId` - Filter by sponsor ID
-- `limit` - Limit results (default: 50)
-
----
-
-### 8. Analytics & Reporting
-
-#### Get Analytics Overview
-**GET** `/api/analytics/overview` *(Requires Authentication)*
-
-**Query Parameters:**
-- `period` - Time period (24h, 7d, 30d, 1y)
-
-#### Get Slot Performance Analytics
-**GET** `/api/analytics/slots/performance` *(Requires Authentication)*
-
-#### Get Sponsor Performance Analytics
-**GET** `/api/analytics/sponsors/performance` *(Requires Authentication)*
-
-#### Get Real-time Analytics
-**GET** `/api/analytics/realtime` *(Requires Authentication)*
-
-#### Export Analytics Data
-**POST** `/api/analytics/export` *(Requires Authentication)*
-```json
-{
-  "format": "csv", // or "json"
-  "period": "7d",
-  "metrics": ["views", "scans", "ar_activations"]
-}
-```
-
----
-
-### 9. Device Synchronization
-
-#### Get Sync Status
-**GET** `/api/sync/status` *(Requires Authentication)*
-
-#### Get Connected Devices
-**GET** `/api/sync/devices` *(Requires Authentication)*
-
-#### Force Sync to Device
-**POST** `/api/sync/device/:deviceId/sync` *(Requires Authentication)*
-
-#### Broadcast Message to All Devices
-**POST** `/api/sync/broadcast` *(Requires Authentication)*
+**Request Body:**
 ```json
 {
   "message": "System maintenance in 5 minutes",
-  "type": "warning",
-  "priority": "high"
+  "type": "MAINTENANCE_ALERT",
+  "priority": "HIGH"
 }
 ```
 
----
+### 7. Advanced Scheduling System
 
-### 10. System Management
-
-#### Get System Status
-**GET** `/api/system/status`
-
-#### Get System Health
-**GET** `/api/system/health`
-
-#### Get System Configuration
-**GET** `/api/system/config` *(Requires Authentication)*
-
-#### Update System Configuration
-**PUT** `/api/system/config` *(Requires Admin)*
+#### Create Schedule
+```http
+POST /api/scheduling/schedules
+```
+**Request Body:**
 ```json
 {
-  "slotRotationInterval": 20000,
-  "arRotationTimesPerDay": 6,
-  "autoRotationEnabled": true
+  "name": "Morning Rotation Schedule",
+  "description": "Premium slots rotation for morning hours",
+  "type": "ROTATION",
+  "startTime": "2025-09-08T06:00:00Z",
+  "endTime": "2025-09-08T12:00:00Z",
+  "isRecurring": true,
+  "recurrencePattern": "DAILY"
 }
 ```
 
----
-
-## 📡 WebSocket Events
-
-### Client to Server Events
-
-#### Device Registration
-```javascript
-socket.emit('register_device', {
-  deviceId: 'device-123',
-  deviceType: 'tablet',
-  location: 'main-hall',
-  capabilities: ['ar', 'hologram', 'qr_scan']
-});
+#### Get Active Schedules
+```http
+GET /api/scheduling/schedules/active
 ```
 
-#### Slot View Tracking
-```javascript
-socket.emit('slot_view', {
-  slotId: 'slot-1',
-  deviceId: 'device-123',
-  timestamp: new Date().toISOString()
-});
+#### Start Rotation
+```http
+POST /api/scheduling/rotation/start
 ```
 
-#### AR Content Activation
-```javascript
-socket.emit('ar_activation', {
-  contentId: 'ar-1',
-  deviceId: 'device-123',
-  activationTime: new Date().toISOString()
-});
+### 8. Interactive Content System
+
+#### Create Hidden Content
+```http
+POST /api/interactive/hidden-content
+```
+**Request Body:**
+```json
+{
+  "slotId": "SLOT-001",
+  "contentType": "VIDEO",
+  "title": "Exclusive Sponsor Video",
+  "description": "Behind the scenes content",
+  "content": "https://example.com/video.mp4",
+  "isActive": true
+}
 ```
 
-#### Bid Placement
-```javascript
-socket.emit('bid_place', {
-  slotId: 'slot-8',
-  bidAmount: 1600.00,
-  currency: 'USD',
-  sponsorId: 'sponsor-1'
-});
+#### Create QR Code
+```http
+POST /api/interactive/qr-codes
+```
+**Request Body:**
+```json
+{
+  "slotId": "SLOT-001",
+  "data": "https://sponsor.com/special-offer",
+  "title": "Special Offer QR",
+  "description": "Scan for exclusive discount"
+}
 ```
 
-### Server to Client Events
+### 9. System Configuration
 
-#### System Status Updates
-```javascript
-socket.on('system_status', (data) => {
-  console.log('System status:', data);
-});
+#### Get System Config
+```http
+GET /api/system-config
 ```
 
-#### Slot Updates
-```javascript
-socket.on('slot_update', (data) => {
-  console.log('Slot updated:', data);
-});
+#### Update System Config
+```http
+PUT /api/system-config/:key
+```
+**Request Body:**
+```json
+{
+  "value": {
+    "seconds": 45
+  },
+  "description": "Updated rotation speed"
+}
 ```
 
-#### AR Content Triggers
-```javascript
-socket.on('ar_trigger', (data) => {
-  console.log('AR content triggered:', data);
-});
+## 📱 Device Management APIs
+
+### 10. Beamer Device Management
+
+#### Get Beamer Config
+```http
+GET /api/beamer/config/:deviceId
 ```
 
-#### Bid Updates
-```javascript
-socket.on('bid_update', (data) => {
-  console.log('Bid updated:', data);
-});
+#### Update Beamer Config
+```http
+PUT /api/beamer/config/:deviceId
 ```
 
-#### Emergency Broadcasts
-```javascript
-socket.on('emergency_broadcast', (data) => {
-  console.log('Emergency message:', data);
-});
+#### Get Beamer Status
+```http
+GET /api/beamer/status
 ```
 
----
+### 11. iPad Device Management
 
-## 🔧 Error Handling
+#### Get iPad Config
+```http
+GET /api/ipad/config/:deviceId
+```
 
-### Error Response Format
+#### Update iPad Location
+```http
+POST /api/ipad/location
+```
+
+#### Get iPad Status
+```http
+GET /api/ipad/status
+```
+
+### 12. Sponsor Management
+
+#### Get All Sponsors
+```http
+GET /api/sponsors
+```
+
+#### Get Sponsor Stats
+```http
+GET /api/sponsors/:id/stats
+```
+
+### 13. Scheduling Blocks
+
+#### Get Active Blocks
+```http
+GET /api/blocks/active
+```
+
+#### Get Block Stats
+```http
+GET /api/blocks/stats
+```
+
+### 14. AR Content Management
+
+#### Get AR Models
+```http
+GET /api/ar/models
+```
+
+#### Get AR Triggers
+```http
+GET /api/ar/triggers
+```
+
+## 📊 Analytics & Monitoring APIs
+
+### 15. Basic Analytics
+
+#### Track Analytics Event
+```http
+POST /api/analytics/events
+```
+**Request Body:**
+```json
+{
+  "eventType": "SLOT_VIEW",
+  "slotId": "SLOT-001",
+  "userId": "USER-001",
+  "metadata": {
+    "timestamp": "2025-09-08T14:45:58.331Z",
+    "source": "mobile_app"
+  }
+}
+```
+
+#### Get Slot Analytics
+```http
+GET /api/analytics/slots/:slotId
+```
+
+#### Get Company Analytics
+```http
+GET /api/analytics/companies/:companyId
+```
+
+### 16. Advanced Analytics
+
+#### Get Analytics Overview
+```http
+GET /api/advanced-analytics/overview
+```
+
+#### Get Performance Metrics
+```http
+GET /api/advanced-analytics/performance
+```
+
+#### Get Engagement Analytics
+```http
+GET /api/advanced-analytics/engagement
+```
+
+#### Get Conversion Tracking
+```http
+GET /api/advanced-analytics/conversion
+```
+
+### 17. Performance Monitoring
+
+#### Get Performance Metrics
+```http
+GET /api/performance-monitoring/metrics
+```
+
+#### Create Performance Metric
+```http
+POST /api/performance-monitoring/metrics
+```
+**Request Body:**
+```json
+{
+  "deviceId": "DEV-001",
+  "metricType": "CPU_USAGE",
+  "value": 75.5,
+  "unit": "percent",
+  "timestamp": "2025-09-08T14:45:58.331Z"
+}
+```
+
+#### Get System Health
+```http
+GET /api/performance-monitoring/health
+```
+
+#### Create Performance Alert
+```http
+POST /api/performance-monitoring/alerts
+```
+**Request Body:**
+```json
+{
+  "alertType": "THRESHOLD_EXCEEDED",
+  "severity": "WARNING",
+  "title": "High CPU Usage",
+  "message": "CPU usage exceeded 80%",
+  "metricType": "CPU_USAGE",
+  "threshold": 80,
+  "currentValue": 85.5,
+  "deviceId": "DEV-001"
+}
+```
+
+### 18. Advanced Auction System
+
+#### Create Auction Session
+```http
+POST /api/advanced-auction/sessions
+```
+**Request Body:**
+```json
+{
+  "name": "Premium Slot Auction",
+  "description": "Auction for premium sponsor slots",
+  "startTime": "2025-09-08T17:00:00Z",
+  "endTime": "2025-09-08T19:00:00Z",
+  "reservePrice": 50000,
+  "bidIncrement": 5000,
+  "autoExtend": true,
+  "extendDuration": 300
+}
+```
+
+#### Get Active Auctions
+```http
+GET /api/advanced-auction/active
+```
+
+#### Get Auction Statistics
+```http
+GET /api/advanced-auction/statistics
+```
+
+### 19. Advanced Visual Effects
+
+#### Get Visual Effects
+```http
+GET /api/visual-effects/effects
+```
+
+#### Create Visual Effect
+```http
+POST /api/visual-effects/effects
+```
+**Request Body:**
+```json
+{
+  "name": "Premium Hologram",
+  "type": "HOLOGRAM",
+  "description": "Advanced holographic display",
+  "config": {
+    "intensity": 0.8,
+    "color": "#00ff00",
+    "animation": "pulse"
+  },
+  "isActive": true
+}
+```
+
+#### Get Hologram Configurations
+```http
+GET /api/visual-effects/holograms
+```
+
+#### Get Animation Presets
+```http
+GET /api/visual-effects/animations
+```
+
+## ❌ Error Handling
+
+### Standard Error Response Format
 ```json
 {
   "success": false,
-  "error": "Error Type",
-  "message": "Human-readable error message",
-  "details": [
+  "message": "Error description",
+  "error": "Detailed error information",
+  "timestamp": "2025-09-08T14:45:58.331Z"
+}
+```
+
+### HTTP Status Codes
+- `200` - Success
+- `201` - Created
+- `400` - Bad Request
+- `401` - Unauthorized
+- `403` - Forbidden
+- `404` - Not Found
+- `409` - Conflict
+- `422` - Validation Error
+- `500` - Internal Server Error
+
+### Common Error Examples
+
+#### Validation Error (422)
+```json
+{
+  "success": false,
+  "message": "Validation failed",
+  "errors": [
     {
-      "field": "fieldName",
-      "message": "Field-specific error message"
+      "field": "email",
+      "message": "Invalid email format"
     }
   ]
 }
 ```
 
-### Common HTTP Status Codes
-- **200** - Success
-- **201** - Created
-- **400** - Bad Request (validation errors)
-- **401** - Unauthorized (invalid/missing token)
-- **403** - Forbidden (insufficient permissions)
-- **404** - Not Found
-- **429** - Too Many Requests (rate limited)
-- **500** - Internal Server Error
-
----
-
-## 📊 Rate Limiting
-
-### Limits by Endpoint Type
-- **General API**: 100 requests per 15 minutes
-- **Authentication**: 5 requests per 15 minutes
-- **File Uploads**: 10 requests per 15 minutes
-- **Socket Connections**: 50 connections per 15 minutes
-
-### Rate Limit Headers
-```
-X-RateLimit-Limit: 100
-X-RateLimit-Remaining: 95
-X-RateLimit-Reset: 1640995200
-```
-
----
-
-## 🧪 Testing
-
-### Health Check
-```bash
-curl http://localhost:5000/health
-```
-
-### Test Authentication
-```bash
-# Login
-curl -X POST http://localhost:5000/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"email":"test@example.com","password":"password123"}'
-
-# Use token
-curl -H "Authorization: Bearer <your-token>" \
-  http://localhost:5000/api/slots
-```
-
-### Test WebSocket Connection
-```javascript
-const socket = io('http://localhost:5000');
-
-socket.on('connect', () => {
-  console.log('Connected to server');
-  
-  // Register device
-  socket.emit('register_device', {
-    deviceId: 'test-device',
-    deviceType: 'tablet'
-  });
-});
-```
-
----
-
-## 📚 SDKs & Libraries
-
-### JavaScript/Node.js
-```bash
-npm install axios socket.io-client
-```
-
-### Python
-```bash
-pip install requests websocket-client
-```
-
-### cURL Examples
-```bash
-# Get all slots
-curl -H "Authorization: Bearer <token>" \
-  "http://localhost:5000/api/slots"
-
-# Create new sponsor
-curl -X POST \
-  -H "Authorization: Bearer <token>" \
-  -H "Content-Type: application/json" \
-  -d '{"name":"NewSponsor","company":"NewCorp"}' \
-  "http://localhost:5000/api/sponsors"
-```
-
----
-
-## 🔐 Security
-
-### Best Practices
-1. **Always use HTTPS in production**
-2. **Store JWT tokens securely**
-3. **Implement proper CORS policies**
-4. **Validate all input data**
-5. **Use rate limiting**
-6. **Monitor API usage**
-
-### CORS Configuration
-```javascript
-// Frontend configuration
-const API_BASE_URL = 'http://localhost:5000/api';
-const SOCKET_URL = 'http://localhost:5000';
-
-// Include credentials for authenticated requests
-fetch(`${API_BASE_URL}/slots`, {
-  credentials: 'include',
-  headers: {
-    'Authorization': `Bearer ${token}`
-  }
-});
-```
-
----
-
-## 📈 Performance
-
-### Optimization Tips
-1. **Use pagination for large datasets**
-2. **Implement caching strategies**
-3. **Use WebSocket for real-time updates**
-4. **Optimize database queries**
-5. **Monitor response times**
-
-### Pagination Example
-```bash
-GET /api/slots?page=1&limit=10&sort=slotNumber&order=asc
-```
-
-**Response:**
+#### Not Found Error (404)
 ```json
 {
-  "success": true,
-  "data": [...],
-  "pagination": {
-    "page": 1,
-    "limit": 10,
-    "total": 24,
-    "pages": 3,
-    "hasNext": true,
-    "hasPrev": false
-  }
+  "success": false,
+  "message": "Slot not found",
+  "timestamp": "2025-09-08T14:45:58.331Z"
 }
 ```
 
----
+## 🚦 Rate Limiting
 
-## 🆘 Support
+- **General APIs**: 100 requests per minute per IP
+- **Authentication**: 5 requests per minute per IP
+- **File Upload**: 10 requests per minute per IP
+- **Analytics**: 1000 requests per minute per IP
 
-### Getting Help
-1. **Check the health endpoint**: `/health`
-2. **Review server logs** in `./logs` directory
-3. **Check API documentation**: `/api`
-4. **Monitor rate limiting** headers
-5. **Verify authentication** token validity
+### Rate Limit Headers
+```http
+X-RateLimit-Limit: 100
+X-RateLimit-Remaining: 95
+X-RateLimit-Reset: 1631020800
+```
 
-### Common Issues
-- **401 Unauthorized**: Check JWT token and expiration
-- **429 Too Many Requests**: Wait for rate limit reset
-- **500 Internal Server Error**: Check server logs
-- **WebSocket Connection Failed**: Verify CORS and Socket.IO configuration
+## 📝 Notes
 
----
+- All timestamps are in ISO 8601 format (UTC)
+- All monetary values are in cents (e.g., 150000 = $1,500.00)
+- Pagination is available for list endpoints with `page` and `limit` parameters
+- Most endpoints support filtering with query parameters
+- File uploads are limited to 10MB per file
+- JWT tokens expire after 24 hours
 
-## 🔄 Changelog
+## 🔗 Related Documentation
 
-### Version 2.0.0
-- Complete API implementation
-- 24-slot management system
-- Real-time WebSocket support
-- AR content management
-- Live bidding system
-- Comprehensive analytics
-- Device synchronization
-- Role-based access control
-
----
-
-This API documentation covers all major endpoints and features of the BeamerShow 24-Slot System. For additional information, refer to the main README.md file or create an issue in the project repository.
+- [Backend Architecture](./BACKEND_ARCHITECTURE.md)
+- [Database Schema](./DATABASE_SCHEMA.md)
+- [Deployment Guide](./DEPLOYMENT_GUIDE.md)
+- [Testing Guide](./TESTING_GUIDE.md)
