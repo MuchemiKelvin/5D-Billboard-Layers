@@ -11,7 +11,7 @@ import { Server as SocketIOServer } from 'socket.io';
 dotenv.config();
 
 // Configure BigInt serialization for JSON responses
-(BigInt.prototype as any).toJSON = function() {
+(BigInt.prototype as any).toJSON = function () {
   return Number(this);
 };
 
@@ -52,31 +52,36 @@ const PORT = process.env.PORT || 3001;
 const server = createServer(app);
 const io = new SocketIOServer(server, {
   cors: {
-    origin: "*",
-    methods: ["GET", "POST"]
-  }
+    origin: ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:8080'],
+    methods: ['GET', 'POST'],
+    credentials: true,
+  },
 });
 
 // Security middleware
-app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
-      scriptSrcAttr: ["'unsafe-inline'"],
-      imgSrc: ["'self'", "data:", "https:"],
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+        scriptSrcAttr: ["'unsafe-inline'"],
+        imgSrc: ["'self'", 'data:', 'https:'],
+      },
     },
-  },
-}));
+  })
+);
 
 // CORS configuration
-app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
-}));
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  })
+);
 
 // Compression middleware
 app.use(compression());
@@ -101,20 +106,20 @@ app.get('/health', async (req, res) => {
   try {
     const { checkDatabaseHealth } = await import('./lib/database');
     const dbHealth = await checkDatabaseHealth();
-    
+
     res.json({
       status: 'healthy',
       timestamp: new Date().toISOString(),
       uptime: process.uptime(),
       environment: process.env.NODE_ENV || 'development',
       database: dbHealth,
-      version: '2.0.0'
+      version: '2.0.0',
     });
   } catch (error) {
     res.status(500).json({
       status: 'unhealthy',
       timestamp: new Date().toISOString(),
-      error: (error as Error).message
+      error: (error as Error).message,
     });
   }
 });
@@ -827,7 +832,7 @@ app.use('*', (req, res) => {
     success: false,
     message: 'Endpoint not found',
     path: req.originalUrl,
-    method: req.method
+    method: req.method,
   });
 });
 
@@ -837,7 +842,10 @@ app.use((err: any, req: any, res: any, next: any) => {
   res.status(500).json({
     success: false,
     message: 'Internal server error',
-    error: process.env.NODE_ENV === 'development' ? err.message : 'Something went wrong'
+    error:
+      process.env.NODE_ENV === 'development'
+        ? err.message
+        : 'Something went wrong',
   });
 });
 
@@ -865,7 +873,6 @@ const startServer = async (): Promise<void> => {
       logger.info('Database connected successfully');
       logger.info('Database connection test passed');
     });
-
   } catch (error) {
     logger.error('Error occurred', error);
     process.exit(1);
