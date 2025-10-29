@@ -18,7 +18,9 @@ export enum UserRole {
   ADMIN = 'ADMIN',
   OPERATOR = 'OPERATOR',
   SPONSOR = 'SPONSOR',
-  VIEWER = 'VIEWER'
+  VIEWER = 'VIEWER',
+  NOTARY = 'NOTARY',
+  AUDITOR = 'AUDITOR'
 }
 
 export interface Company {

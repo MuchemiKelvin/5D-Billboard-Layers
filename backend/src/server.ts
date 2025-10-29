@@ -39,6 +39,8 @@ import sponsorsRoutes from './routes/sponsors-simple';
 import blocksRoutes from './routes/blocks-simple';
 import arRoutes from './routes/ar-simple';
 import syncDeviceRoutes from './routes/sync-device-simple';
+import chainRoutes from './routes/chain';
+import auditRoutes from './routes/audit';
 import { connectDatabase } from './lib/database';
 import { setupSocketHandlers } from './socket/handlers';
 import { logger } from './utils/logger';
@@ -148,6 +150,8 @@ app.use('/api/sponsors', sponsorsRoutes);
 app.use('/api/blocks', blocksRoutes);
 app.use('/api/ar', arRoutes);
 app.use('/api/sync', syncDeviceRoutes);
+app.use('/api/chain', chainRoutes);
+app.use('/api/audit', auditRoutes);
 
 // API Tester endpoint
 app.get('/api-tester', (req, res) => {

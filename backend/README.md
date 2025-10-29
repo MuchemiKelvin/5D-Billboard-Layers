@@ -16,11 +16,13 @@ A comprehensive Node.js backend system for managing sponsor displays, bidding sy
 ## 🚀 Quick Start
 
 ### Prerequisites
+
 - Node.js 18.x or higher
 - npm 8.x or higher
 - Git
 
 ### Installation
+
 ```bash
 # Clone repository
 git clone <repository-url>
@@ -43,6 +45,7 @@ npm run dev
 ```
 
 ### Verify Installation
+
 ```bash
 # Test health endpoint
 curl http://localhost:3002/health
@@ -112,6 +115,7 @@ powershell -ExecutionPolicy Bypass -File "final-test.ps1"
 ## 🌐 API Endpoints
 
 ### Core APIs (100% Success)
+
 - **Authentication**: `/api/auth/*`
 - **Companies**: `/api/companies`
 - **Slots**: `/api/slots`
@@ -119,17 +123,20 @@ powershell -ExecutionPolicy Bypass -File "final-test.ps1"
 - **Health**: `/health`
 
 ### Advanced APIs (89% Success)
+
 - **Multi-Device Sync**: `/api/sync/*`
 - **Advanced Scheduling**: `/api/scheduling/*`
 - **Interactive Content**: `/api/interactive/*`
 - **System Configuration**: `/api/system-config/*`
 
 ### Analytics & Monitoring (85% Success)
+
 - **Basic Analytics**: `/api/analytics/*`
 - **Advanced Analytics**: `/api/advanced-analytics/*`
 - **Performance Monitoring**: `/api/performance-monitoring/*`
 
 ### Device Management (100% Success)
+
 - **Beamer Control**: `/api/beamer/*`
 - **iPad Management**: `/api/ipad/*`
 - **Sponsor Management**: `/api/sponsors/*`
@@ -140,6 +147,7 @@ powershell -ExecutionPolicy Bypass -File "final-test.ps1"
 The system uses a comprehensive relational schema with 25+ entities:
 
 ### Core Entities
+
 - **User**: System users with role-based access
 - **Company**: Sponsor companies
 - **Slot**: 24 sponsor display slots
@@ -147,6 +155,7 @@ The system uses a comprehensive relational schema with 25+ entities:
 - **Device**: Connected devices (Beamer, iPad, etc.)
 
 ### Advanced Features
+
 - **Analytics**: Event tracking and metrics
 - **Performance Monitoring**: System health metrics
 - **Visual Effects**: Holographic and AR content
@@ -174,6 +183,7 @@ The system uses a comprehensive relational schema with 25+ entities:
 ## 🧪 Testing
 
 ### Automated Testing
+
 ```bash
 # Run comprehensive API tests
 powershell -ExecutionPolicy Bypass -File "final-test.ps1"
@@ -186,6 +196,7 @@ powershell -ExecutionPolicy Bypass -File "final-test.ps1"
 ```
 
 ### Test Categories
+
 1. **Core APIs**: 100% success rate
 2. **Advanced APIs**: 89% success rate
 3. **Device Management**: 100% success rate
@@ -195,17 +206,20 @@ powershell -ExecutionPolicy Bypass -File "final-test.ps1"
 ## 🚀 Deployment
 
 ### Development
+
 ```bash
 npm run dev
 ```
 
 ### Production
+
 ```bash
 npm run build
 npm start
 ```
 
 ### With PM2
+
 ```bash
 pm2 start ecosystem.config.js --env production
 ```
@@ -221,6 +235,7 @@ pm2 start ecosystem.config.js --env production
 ## 🔧 Configuration
 
 ### Environment Variables
+
 ```env
 # Database
 DATABASE_URL="file:./dev.db"
@@ -228,6 +243,7 @@ DATABASE_URL="file:./dev.db"
 # Server
 PORT=3002
 NODE_ENV=development
+FRONTEND_URL=http://localhost:3000
 
 # JWT
 JWT_SECRET=your-secret-key
@@ -236,6 +252,33 @@ JWT_EXPIRES_IN=24h
 # File Upload
 MAX_FILE_SIZE=10485760
 UPLOAD_PATH=./uploads
+
+# Blockchain Verification
+ETH_RPC_URL=https://sepolia.infura.io/v3/<your-key>
+CHAIN_NETWORK=sepolia
+
+# Audit Exports Encryption
+AUDIT_EXPORT_KEY=change-this-passphrase
+
+# IP Allowlists (comma-separated)
+NOTARY_IP_ALLOWLIST=127.0.0.1
+AUDITOR_IP_ALLOWLIST=127.0.0.1
+```
+
+### New Endpoints: Chain & Audit
+
+- GET `/api/chain/verify/:txHash` — Verify on-chain transaction integrity. Requires JWT. IP-allowlist enforced for NOTARY.
+- POST `/api/audit/validate` — Validate local hashes vs the embedded on-chain hash in tx input. Optional `{ "export": true }` returns AES-256-GCM encrypted payload.
+
+Example body for `/api/audit/validate`:
+
+```json
+{
+  "txHash": "0x<64-hex>",
+  "expectedHash": "optional-single-hash",
+  "hashes": ["optional", "list", "of-hashes"],
+  "export": true
+}
 ```
 
 ## 🐛 Troubleshooting
@@ -243,23 +286,27 @@ UPLOAD_PATH=./uploads
 ### Common Issues
 
 #### Port Already in Use
+
 ```bash
 lsof -i :3002
 kill -9 <PID>
 ```
 
 #### Database Connection Issues
+
 ```bash
 npx prisma generate
 npx prisma migrate reset
 ```
 
 #### Memory Issues
+
 ```bash
 pm2 restart beamershow-backend
 ```
 
 ### Debug Mode
+
 ```bash
 LOG_LEVEL=debug npm run dev
 ```
@@ -285,6 +332,7 @@ This project is licensed under the MIT License.
 ## 📞 Support
 
 For support and questions:
+
 - Create an issue in the repository
 - Check the documentation
 - Review the troubleshooting guide

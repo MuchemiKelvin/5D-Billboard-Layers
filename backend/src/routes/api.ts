@@ -18,6 +18,20 @@ router.get('/', (req: Request, res: Response) => {
       description: 'Complete API for managing 24-slot rotating advertisement system with AR/AI/Hologram capabilities',
       baseUrl: '/api',
       endpoints: {
+        chain: {
+          base: '/chain',
+          description: 'Blockchain verification utilities',
+          endpoints: [
+            { method: 'GET', path: '/verify/:txHash', description: 'Verify on-chain transaction integrity', auth: true, role: 'notary' }
+          ]
+        },
+        audit: {
+          base: '/audit',
+          description: 'Audit and integrity validation',
+          endpoints: [
+            { method: 'POST', path: '/validate', description: 'Validate local hashes vs blockchain', auth: true, role: 'auditor' }
+          ]
+        },
         auth: {
           base: '/auth',
           description: 'User authentication and authorization',
