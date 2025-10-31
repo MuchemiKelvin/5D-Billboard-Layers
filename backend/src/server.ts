@@ -45,6 +45,7 @@ import escrowRoutes from './routes/escrow';
 import { connectDatabase } from './lib/database';
 import { setupSocketHandlers } from './socket/handlers';
 import { logger } from './utils/logger';
+import cron from 'node-cron';
 // import { errorHandler } from './middleware/errorHandler';
 // import { rateLimiter } from './middleware/rateLimiter';
 
@@ -879,6 +880,24 @@ const startServer = async (): Promise<void> => {
       logger.info('Database connected successfully');
       logger.info('Database connection test passed');
     });
+
+    // Schedule periodic anchoring every 5 minutes
+    try {
+      const { batchAndAnchor } = await import('./services/AnchorService');
+      cron.schedule('*/5 * * * *', async () => {
+        try {
+          const result = await batchAndAnchor(50);
+          if (result.created) {
+            logger.info(`Anchoring batch created: ${result.anchorId} tx=${result.txHash || 'n/a'}`);
+          }
+        } catch (e) {
+          logger.warn(`Anchoring job error: ${(e as Error).message}`);
+        }
+      });
+      logger.info('Anchoring cron job scheduled (every 5 minutes)');
+    } catch (e) {
+      logger.warn('Failed to schedule anchoring cron job');
+    }
   } catch (error) {
     logger.error('Error occurred', error);
     process.exit(1);

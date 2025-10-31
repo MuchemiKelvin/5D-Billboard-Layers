@@ -959,6 +959,9 @@ model EscrowLog {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
+  // Anchoring relation
+  anchors       AnchorItem[]
+
   @@map("escrow_logs")
 }
 
@@ -970,6 +973,44 @@ enum EscrowType {
 enum EscrowStatus {
   PENDING
   SUCCESS
+  FAILED
+}
+
+// ============================================================================
+// AUDIT ANCHORING (PHASE 2)
+// ============================================================================
+
+model AuditAnchor {
+  id           String   @id @default(cuid())
+  batchHash    String
+  txHash       String?
+  blockNumber  String?
+  status       AnchorStatus @default(PENDING)
+  itemCount    Int      @default(0)
+  createdAt    DateTime @default(now())
+
+  items        AnchorItem[]
+
+  @@map("audit_anchors")
+}
+
+model AnchorItem {
+  id          String   @id @default(cuid())
+  anchorId    String
+  escrowLogId String
+  proofHash   String
+
+  anchor      AuditAnchor @relation(fields: [anchorId], references: [id], onDelete: Cascade)
+  escrow      EscrowLog   @relation(fields: [escrowLogId], references: [id])
+
+  @@unique([anchorId, escrowLogId])
+  @@map("anchor_items")
+}
+
+enum AnchorStatus {
+  PENDING
+  SENT
+  CONFIRMED
   FAILED
 }
 

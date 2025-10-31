@@ -32,6 +32,14 @@ router.get('/', (req: Request, res: Response) => {
             { method: 'POST', path: '/validate', description: 'Validate local hashes vs blockchain', auth: true, role: 'auditor' }
           ]
         },
+        anchoring: {
+          base: '/audit',
+          description: 'Blockchain anchoring of audit logs',
+          endpoints: [
+            { method: 'POST', path: '/anchor', description: 'Batch and anchor recent audit hashes', auth: true, role: 'auditor' },
+            { method: 'GET', path: '/anchors/:id', description: 'Get anchor details by id', auth: true, role: 'auditor' }
+          ]
+        },
         escrow: {
           base: '/escrow',
           description: 'Escrow logging and lifecycle',
