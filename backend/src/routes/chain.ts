@@ -15,8 +15,8 @@ router.use(ipAllowlistForRoles(['NOTARY']));
 router.get('/verify/:txHash', async (req: Request, res: Response) => {
   try {
     const { txHash } = req.params;
-    if (!/^0x([A-Fa-f0-9]{64})$/.test(txHash)) {
-      return res.status(400).json({ success: false, message: 'Invalid txHash format' });
+    if (!txHash || !/^0x([A-Fa-f0-9]{64})$/.test(txHash)) {
+      return res.status(400).json({ success: false, message: 'Invalid or missing txHash format' });
     }
 
     const result = await verifyOnChainIntegrity(txHash);
@@ -31,6 +31,7 @@ router.get('/verify/:txHash', async (req: Request, res: Response) => {
 });
 
 export default router;
+
 
 
 

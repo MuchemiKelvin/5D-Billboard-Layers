@@ -32,6 +32,14 @@ router.get('/', (req: Request, res: Response) => {
             { method: 'POST', path: '/validate', description: 'Validate local hashes vs blockchain', auth: true, role: 'auditor' }
           ]
         },
+        escrow: {
+          base: '/escrow',
+          description: 'Escrow logging and lifecycle',
+          endpoints: [
+            { method: 'POST', path: '/hold', description: 'Create escrow HOLD log (stub)' },
+            { method: 'GET', path: '/:uid', description: 'Get escrow by txUid' }
+          ]
+        },
         auth: {
           base: '/auth',
           description: 'User authentication and authorization',

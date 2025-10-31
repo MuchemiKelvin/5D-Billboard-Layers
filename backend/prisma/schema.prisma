@@ -939,6 +939,40 @@ model EffectPerformance {
   @@map("effect_performance")
 }
 
+// ============================================================================
+// ESCROW LOGGING (PHASE 1)
+// ============================================================================
+
+model EscrowLog {
+  id             String   @id @default(cuid())
+  txUid          String   @unique
+  type           EscrowType
+  amount         Float
+  currency       String   @default("KES")
+  status         EscrowStatus @default(PENDING)
+  mpesaRef       String?
+  requestedAt    DateTime @default(now())
+  completedAt    DateTime?
+  requestMeta    Json?
+  responseMeta   Json?
+  auditProofHash String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@map("escrow_logs")
+}
+
+enum EscrowType {
+  HOLD
+  RELEASE
+}
+
+enum EscrowStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
 enum VisualEffectType {
   HOLOGRAM
   PARTICLE_SYSTEM

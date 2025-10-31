@@ -263,6 +263,14 @@ AUDIT_EXPORT_KEY=change-this-passphrase
 # IP Allowlists (comma-separated)
 NOTARY_IP_ALLOWLIST=127.0.0.1
 AUDITOR_IP_ALLOWLIST=127.0.0.1
+
+# M-Pesa (Daraja) Sandbox
+MPESA_BASE_URL=https://sandbox.safaricom.co.ke
+MPESA_CONSUMER_KEY=<your-consumer-key>
+MPESA_CONSUMER_SECRET=<your-consumer-secret>
+MPESA_SHORTCODE=<your-sandbox-shortcode>
+MPESA_PASSKEY=<your-stk-passkey>
+MPESA_CALLBACK_URL=https://<your-public-host>/api/escrow/webhook/mpesa
 ```
 
 ### New Endpoints: Chain & Audit

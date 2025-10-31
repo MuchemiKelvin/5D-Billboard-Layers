@@ -12,11 +12,15 @@ router.use(ipAllowlistForRoles(['AUDITOR']));
 const requireAuth = (req: Request, res: Response, next: Function) => {
   try {
     const token = req.headers.authorization?.split(' ')[1];
-    if (!token) return res.status(401).json({ success: false, message: 'Access token is required' });
+    if (!token) {
+      res.status(401).json({ success: false, message: 'Access token is required' });
+      return;
+    }
     jwt.verify(token, process.env.JWT_SECRET || 'beamershow-secret-key');
-    next();
+    return next();
   } catch (error) {
-    return res.status(401).json({ success: false, message: 'Unauthorized', error: (error as Error).message });
+    res.status(401).json({ success: false, message: 'Unauthorized', error: (error as Error).message });
+    return;
   }
 };
 
@@ -69,6 +73,3 @@ router.post('/validate', requireAuth, async (req: Request, res: Response) => {
 });
 
 export default router;
-
-
-

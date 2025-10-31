@@ -16,6 +16,21 @@ export interface VerifyResult {
   error?: string;
 }
 
+interface RpcError {
+  message: string;
+}
+
+interface RpcResponse {
+  result?: unknown;
+  error?: RpcError;
+}
+
+function isRpcResponse(data: unknown): data is RpcResponse {
+  return (
+    typeof data === 'object' && data !== null && ('result' in data || 'error' in data)
+  );
+}
+
 const jsonRpc = async (method: string, params: any[]): Promise<any> => {
   const rpcUrl = process.env.ETH_RPC_URL;
   if (!rpcUrl) {
@@ -40,10 +55,13 @@ const jsonRpc = async (method: string, params: any[]): Promise<any> => {
   }
 
   const data = await res.json();
-  if (data.error) {
-    throw new Error(data.error.message || 'RPC returned error');
+  if (isRpcResponse(data)) {
+    if (data.error) {
+      throw new Error(data.error.message || 'RPC returned error');
+    }
+    return data.result;
   }
-  return data.result;
+  throw new Error('Invalid RPC response format');
 };
 
 export const getTransactionByHash = async (txHash: string): Promise<ChainTx | null> => {
@@ -64,17 +82,19 @@ export const verifyOnChainIntegrity = async (txHash: string): Promise<VerifyResu
       return { found: false };
     }
 
+    const transaction: ChainTx = {
+      hash: tx.hash,
+      ...(tx.blockNumber && { blockNumber: tx.blockNumber }),
+      ...(tx.from && { from: tx.from }),
+      ...(tx.to && { to: tx.to }),
+      ...(tx.input && { input: tx.input }),
+      ...(tx.value && { value: tx.value })
+    };
+
     return {
       found: true,
       network: process.env.CHAIN_NETWORK || 'unknown',
-      transaction: {
-        hash: tx.hash,
-        blockNumber: tx.blockNumber,
-        from: tx.from,
-        to: tx.to,
-        input: tx.input,
-        value: tx.value
-      }
+      transaction
     };
   } catch (error) {
     return { found: false, error: (error as Error).message };
@@ -108,6 +128,7 @@ export const extractEmbeddedHashFromInput = (input?: string): string | null => {
     return null;
   }
 };
+
 
 
 
